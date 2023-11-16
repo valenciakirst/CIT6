@@ -24,6 +24,7 @@
         app:layout_constraintVertical_bias="0.0" />
 
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="390dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="80dp"
@@ -46,25 +47,47 @@
             android:text="Account Settings"
             android:textSize="18sp" />
 
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="390dp"
+        android:layout_height="337dp"
+        android:layout_marginTop="21dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.476"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+        app:layout_constraintVertical_bias="0.0">
+
         <TextView
-            android:id="@+id/textView3"
+            android:id="@+id/textView7"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Notifications"
+            android:padding="3dp"
+            android:paddingStart="15dp"/>
+
+        <Switch
+            android:id="@+id/switch1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white"
-            android:drawableEnd="@drawable/baseline_arrow_forward_ios_24"
             android:padding="15dp"
-            android:text="Notifications"
+            android:text="@string/notifmute"
             android:textSize="18sp" />
 
         <TextView
-            android:id="@+id/textView4"
+            android:id="@+id/textView9"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:drawableEnd="@drawable/baseline_arrow_forward_ios_24"
+            android:text="Notification sound"
+            android:textSize="18sp"
             android:padding="15dp"
-            android:text="Devices"
-            android:textSize="18sp" />
+            android:background="@color/white"
+            android:drawableEnd="@drawable/baseline_arrow_forward_ios_24"/>
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
