@@ -9,6 +9,7 @@ android {
     defaultConfig {
         applicationId = "com.example.mrhydro"
         minSdk = 24
+        //noinspection OldTargetApi
         targetSdk = 33
         versionCode = 1
         versionName = "1.0"
