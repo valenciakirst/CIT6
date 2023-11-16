@@ -10,4 +10,22 @@
     <string name="open_nav">Open Navigation</string>
     <string name="close_nav">Close Navigation</string>
     <string name="notifmute">Mute all notifications</string>
+    <string name="policy">Last updated: [Date] <br></br>
+
+[Your Company/Developer Name] ("us", "we", or "our") operates [Your App/Website Name] (the "Service"). This page informs you of our policies regarding the collection, use, and disclosure of Personal Information when you use our Service.
+<br></br>
+We use your Personal Information for providing and improving the Service. By using the Service, you agree to the collection and use of information in accordance with this policy.
+<br></br>
+Information Collection and Use
+<br></br>
+While using our Service, we may ask you to provide us with certain personally identifiable information that can be used to contact or identify you. Personally identifiable information may include, but is not limited to:
+<br></br>
+Email address<br></br>
+First name and last name<br></br>
+Cookies and Usage Data<br></br>
+Usage Data<br></br>
+
+We may also collect information that your browser sends whenever you visit our Service or when you access the Service by or through a mobile device ("Usage Data").
+<br></br>
+This Usage Data may</string>
 </resources>
