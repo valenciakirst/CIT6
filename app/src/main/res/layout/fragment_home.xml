@@ -37,6 +37,7 @@
 
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/TempCard"
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:layout_row="1"
@@ -82,6 +83,7 @@
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/HumidityCard"
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:layout_row="1"
@@ -128,6 +130,7 @@
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/MisterCard"
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:layout_row="2"
