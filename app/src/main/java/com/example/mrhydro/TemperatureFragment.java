@@ -1,43 +1,73 @@
 package com.example.mrhydro;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.fragment.app.Fragment;
 
-public class TemperatureFragment extends Fragment {
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-    private String mParam1;
-    private String mParam2;
+import com.example.mrhydro.databinding.FragmentTemperatureBinding;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+public class TemperatureFragment extends HomeFragment {
+
+    FragmentTemperatureBinding binding;
+    DatabaseReference reference;
 
     public TemperatureFragment() {
-
-    }
-
-    public static TemperatureFragment newInstance(String param1, String param2) {
-        TemperatureFragment fragment = new TemperatureFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
+        // Required empty public constructor
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_temperature, container, false);
+        // Inflate the layout for this fragment using the generated binding class
+        binding = FragmentTemperatureBinding.inflate(inflater, container, false);
+        View view = binding.getRoot();
+
+        // Read data from Firebase
+        readTemperatureData();
+
+        return view;
+    }
+
+    private void readTemperatureData() {
+        reference = FirebaseDatabase.getInstance().getReference("DHT");
+
+        reference.child("Temperature in C").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // Check if the value is a Double
+                if (dataSnapshot.exists() && dataSnapshot.getValue() instanceof Double) {
+                    // Convert the value to a String
+                    String temperatureValue = String.valueOf(dataSnapshot.getValue());
+                    Log.d("TemperatureFragment", "Temperature value from Firebase: " + temperatureValue);
+
+                    // Update your UI or perform actions with the temperature data
+                    if (temperatureValue != null) {
+                        // Assuming you have a TextView inside the TempCard, replace R.id.TempCard with its actual ID
+                        binding.temperatureValue.setText(temperatureValue);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Handle errors here
+                Log.e("TemperatureFragment", "Failed to read temperature data", databaseError.toException());
+            }
+        });
     }
 }
+
