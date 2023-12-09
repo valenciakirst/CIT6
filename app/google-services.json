@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "163591310136",
+    "firebase_url": "https://cit6-mrhydro-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "cit6-mrhydro",
+    "storage_bucket": "cit6-mrhydro.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:163591310136:android:823638249b4281a0fbcfcd",
+        "android_client_info": {
+          "package_name": "com.example.mrhydro"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDM8xkL2ZpITPae9RoF6UxCpSZxNfd8Ipk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,64 +1,73 @@
 package com.example.mrhydro;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link TemperatureFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class TemperatureFragment extends Fragment {
+import androidx.fragment.app.Fragment;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+import com.example.mrhydro.databinding.FragmentTemperatureBinding;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+public class TemperatureFragment extends HomeFragment {
+
+    FragmentTemperatureBinding binding;
+    DatabaseReference reference;
 
     public TemperatureFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment TemperatureFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static TemperatureFragment newInstance(String param1, String param2) {
-        TemperatureFragment fragment = new TemperatureFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_temperature, container, false);
+        // Inflate the layout for this fragment using the generated binding class
+        binding = FragmentTemperatureBinding.inflate(inflater, container, false);
+        View view = binding.getRoot();
+
+        // Read data from Firebase
+        readTemperatureData();
+
+        return view;
+    }
+
+    private void readTemperatureData() {
+        reference = FirebaseDatabase.getInstance().getReference("DHT");
+
+        reference.child("Temperature in C").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // Check if the value is a Double
+                if (dataSnapshot.exists() && dataSnapshot.getValue() instanceof Double) {
+                    // Convert the value to a String
+                    String temperatureValue = String.valueOf(dataSnapshot.getValue());
+                    Log.d("TemperatureFragment", "Temperature value from Firebase: " + temperatureValue);
+
+                    // Update your UI or perform actions with the temperature data
+                    if (temperatureValue != null) {
+                        // Assuming you have a TextView inside the TempCard, replace R.id.TempCard with its actual ID
+                        binding.temperatureValue.setText(temperatureValue);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Handle errors here
+                Log.e("TemperatureFragment", "Failed to read temperature data", databaseError.toException());
+            }
+        });
     }
 }
+

@@ -8,7 +8,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.mrhydro.databinding.ActivityMainBinding;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 public class HomeFragment extends Fragment implements View.OnClickListener {
+// ...
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
