@@ -5,8 +5,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.mrhydro.databinding.FragmentTemperatureBinding;
 import com.google.firebase.database.DataSnapshot;
@@ -15,7 +18,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-public class TemperatureFragment extends HomeFragment {
+public class TemperatureFragment extends Fragment implements View.OnClickListener{
 
     FragmentTemperatureBinding binding;
     DatabaseReference reference;
@@ -35,7 +38,8 @@ public class TemperatureFragment extends HomeFragment {
         // Inflate the layout for this fragment using the generated binding class
         binding = FragmentTemperatureBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
-
+        ImageView backBT = view.findViewById(R.id.backButton);
+        backBT.setOnClickListener(this);
         // Read data from Firebase
         readTemperatureData();
 
@@ -56,7 +60,8 @@ public class TemperatureFragment extends HomeFragment {
 
                     // Update your UI or perform actions with the temperature data
                     if (temperatureValue != null) {
-                        // Assuming you have a TextView inside the TempCard, replace R.id.TempCard with its actual ID
+                        // Assuming you have a TextView inside the layout associated with TemperatureFragment,
+                        // replace R.id.TempCard with its actual ID
                         binding.temperatureValue.setText(temperatureValue);
                     }
                 }
@@ -69,5 +74,17 @@ public class TemperatureFragment extends HomeFragment {
             }
         });
     }
-}
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.backButton) {
+            openFragment(new HomeFragment());
+        }
+    }
 
+    private void openFragment(Fragment fragment) {
+        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+}
