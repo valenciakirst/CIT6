@@ -53,6 +53,7 @@ android {
 }
 dependencies {
     implementation("com.google.firebase:firebase-database:20.3.0")
+
 }
 
 
