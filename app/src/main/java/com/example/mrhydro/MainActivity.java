@@ -11,12 +11,13 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Toast;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Objects;
 
@@ -25,29 +26,37 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     DrawerLayout drawerLayout;
     Toolbar toolbar;
     FragmentManager fragmentManager = getSupportFragmentManager();
-
-
+    NavigationView navigationView;
+    ActionBarDrawerToggle toggle;
+    FirebaseAuth auth;
+    FirebaseUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-//        Toolbar toolbar = findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        auth = FirebaseAuth.getInstance();
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
-//toolbar.setNavigationIcon(R.drawable.ic_toolbar);
         toolbar.setTitle("");
         toolbar.setSubtitle("");
-//toolbar.setLogo(R.drawable.ic_toolbar);
         drawerLayout = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+        // Retrieve the current user
+        user = auth.getCurrentUser();
+
+        // Check if the user is null or not logged in
+        if (user == null) {
+            Intent intent = new Intent(getApplicationContext(), LoginPage.class);
+            startActivity(intent);
+            finish();
+        }
+
+        toggle = new ActionBarDrawerToggle(
                 this, drawerLayout, toolbar, R.string.open_nav, R.string.close_nav
         );
 
@@ -64,6 +73,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
 
+
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
     int itemID = item.getItemId();
@@ -77,6 +87,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         openFragment(new AboutFragment());
     } else if (itemID == R.id.nav_logout){
         Toast.makeText(this, "Logout", Toast.LENGTH_SHORT).show();
+        FirebaseAuth.getInstance().signOut();
+        Intent intent = new Intent(getApplicationContext(), LoginPage.class);
+        startActivity(intent);
+        finish();
     }
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;

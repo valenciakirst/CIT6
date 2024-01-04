@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -27,10 +28,11 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     FragmentHomeBinding binding;
     DatabaseReference reference;
     Handler handler = new Handler(Looper.getMainLooper());
-    private String humidityValue; // Declare humidityValue as a class-level variable
+    private String humidityValue;
+    private String temperatureValue;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
@@ -46,6 +48,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         notificationbt.setOnClickListener(this);
 
         readHumidityData();
+        readTemperatureData();
 
         handler.postDelayed(updateRunnable, UPDATE_INTERVAL);
 
@@ -67,7 +70,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     }
 
     private void openFragment(Fragment fragment) {
-        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+        FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, fragment);
         transaction.addToBackStack(null);
         transaction.commit();
@@ -77,7 +80,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         reference = FirebaseDatabase.getInstance().getReference("DHT");
         reference.child("Humidity").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists() && dataSnapshot.getValue() instanceof Double) {
                     humidityValue = String.valueOf(dataSnapshot.getValue());
                     Log.d("HumidityFragment", "Humidity value from Firebase: " + humidityValue);
@@ -89,8 +92,30 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelled(@NonNull DatabaseError databaseError) {
                 Log.e("HumidityFragment", "Failed to read humidity data", databaseError.toException());
+            }
+        });
+    }
+    private void readTemperatureData() {
+        reference = FirebaseDatabase.getInstance().getReference("DHT");
+        reference.child("Temperature in C").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists() && dataSnapshot.getValue() instanceof Double) {
+                    temperatureValue = String.valueOf(dataSnapshot.getValue());
+                    Log.d("TemperatureFragment", "Temperature value from Firebase: " + temperatureValue);
+
+                    if (temperatureValue != null) {
+                        binding.temperatureValue.setText(temperatureValue);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle errors here
+                Log.e("TemperatureFragment", "Failed to read temperature data", databaseError.toException());
             }
         });
     }
@@ -99,6 +124,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         @Override
         public void run() {
             readHumidityData();
+            readTemperatureData();
             handler.postDelayed(this, UPDATE_INTERVAL);
         }
     };

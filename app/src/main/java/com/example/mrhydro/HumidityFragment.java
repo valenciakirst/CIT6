@@ -1,70 +1,47 @@
 package com.example.mrhydro;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link HumidityFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class HumidityFragment extends Fragment implements View.OnClickListener{
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+import com.example.mrhydro.databinding.FragmentHumidityBinding;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+public class HumidityFragment extends Fragment implements View.OnClickListener {
+    private static final int UPDATE_INTERVAL = 5000;
+
+    FragmentHumidityBinding binding;
+    DatabaseReference reference;
+    Handler handler = new Handler(Looper.getMainLooper());
 
     public HumidityFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment HumidityFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static HumidityFragment newInstance(String param1, String param2) {
-        HumidityFragment fragment = new HumidityFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_humidity, container, false);
+        binding = FragmentHumidityBinding.inflate(inflater, container, false);
+        View view = binding.getRoot();
 
         ImageView backBT = view.findViewById(R.id.backButton);
         backBT.setOnClickListener(this);
+
+        readHumidityData();
+
+        handler.postDelayed(updateRunnable, UPDATE_INTERVAL);
 
         return view;
     }
@@ -82,5 +59,34 @@ public class HumidityFragment extends Fragment implements View.OnClickListener{
         transaction.addToBackStack(null);
         transaction.commit();
     }
-}
 
+    private void readHumidityData() {
+        reference = FirebaseDatabase.getInstance().getReference("DHT");
+        reference.child("Humidity").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists() && dataSnapshot.getValue() instanceof Double) {
+                    String humidityValue = String.valueOf(dataSnapshot.getValue());
+                    Log.d("HumidityFragment", "Humidity value from Firebase: " + humidityValue);
+
+                    if (humidityValue != null && !humidityValue.isEmpty()) {
+                        binding.humidityValue.setText(humidityValue);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e("HumidityFragment", "Failed to read humidity data", databaseError.toException());
+            }
+        });
+    }
+
+    private Runnable updateRunnable = new Runnable() {
+        @Override
+        public void run() {
+            readHumidityData();
+            handler.postDelayed(this, UPDATE_INTERVAL);
+        }
+    };
+}
