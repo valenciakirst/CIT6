@@ -7,6 +7,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.mrhydro.databinding.FragmentHumidityBinding;
 import com.google.firebase.database.DataSnapshot;
@@ -15,7 +19,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-public class HumidityFragment extends HomeFragment {
+public class HumidityFragment extends Fragment implements View.OnClickListener {
     private static final int UPDATE_INTERVAL = 5000;
 
     FragmentHumidityBinding binding;
@@ -23,11 +27,7 @@ public class HumidityFragment extends HomeFragment {
     Handler handler = new Handler(Looper.getMainLooper());
 
     public HumidityFragment() {
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        // Required empty public constructor
     }
 
     @Override
@@ -36,11 +36,28 @@ public class HumidityFragment extends HomeFragment {
         binding = FragmentHumidityBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
 
+        ImageView backBT = view.findViewById(R.id.backButton);
+        backBT.setOnClickListener(this);
+
         readHumidityData();
 
         handler.postDelayed(updateRunnable, UPDATE_INTERVAL);
 
         return view;
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.backButton) {
+            openFragment(new HomeFragment());
+        }
+    }
+
+    private void openFragment(Fragment fragment) {
+        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 
     private void readHumidityData() {
@@ -52,11 +69,11 @@ public class HumidityFragment extends HomeFragment {
                     String humidityValue = String.valueOf(dataSnapshot.getValue());
                     Log.d("HumidityFragment", "Humidity value from Firebase: " + humidityValue);
 
-                    if (humidityValue != null) {
+                    if (humidityValue != null && !humidityValue.isEmpty()) {
                         binding.humidityValue.setText(humidityValue);
                     }
                 }
-                    }
+            }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -72,11 +89,4 @@ public class HumidityFragment extends HomeFragment {
             handler.postDelayed(this, UPDATE_INTERVAL);
         }
     };
-
-    @Override
-    public void onDestroyView() {
-        // Remove the callbacks to prevent memory leaks
-        handler.removeCallbacks(updateRunnable);
-        super.onDestroyView();
-    }
 }

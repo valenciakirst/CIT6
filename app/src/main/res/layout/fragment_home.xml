@@ -80,6 +80,7 @@
                         android:paddingLeft="5dp">
 
                         <TextView
+                            android:id="@+id/temperatureValue"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
@@ -88,12 +89,33 @@
                             android:textSize="50sp" />
 
                         <TextView
-                            android:id="@+id/textView16"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="°C"
                             android:textColor="@color/teal"
                             android:textSize="48sp" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal"></LinearLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="TextView" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="TextView" />
                     </LinearLayout>
 
                 </LinearLayout>
@@ -160,7 +182,6 @@
                             android:textSize="50sp" />
 
                         <TextView
-                            android:id="@+id/textView17"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="%"
@@ -227,7 +248,6 @@
                         android:textColor="@color/teal" />
 
                     <ToggleButton
-                        android:id="@+id/toggleButton2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="ToggleButton" />
@@ -247,7 +267,6 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:elevation="5dp"
