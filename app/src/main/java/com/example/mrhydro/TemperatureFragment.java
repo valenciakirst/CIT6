@@ -20,7 +20,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-public class TemperatureFragment extends Fragment implements View.OnClickListener{
+public class TemperatureFragment extends Fragment implements View.OnClickListener {
 
     private static final int UPDATE_INTERVAL = 2000;
 
@@ -90,6 +90,7 @@ public class TemperatureFragment extends Fragment implements View.OnClickListene
             handler.postDelayed(this, UPDATE_INTERVAL);
         }
     };
+
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.backButton) {
