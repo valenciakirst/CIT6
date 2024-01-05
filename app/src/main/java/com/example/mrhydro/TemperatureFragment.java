@@ -1,6 +1,8 @@
 package com.example.mrhydro;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,8 +22,12 @@ import com.google.firebase.database.ValueEventListener;
 
 public class TemperatureFragment extends Fragment implements View.OnClickListener{
 
+    private static final int UPDATE_INTERVAL = 2000;
+
     FragmentTemperatureBinding binding;
     DatabaseReference reference;
+    Handler handler = new Handler(Looper.getMainLooper());
+
 
     public TemperatureFragment() {
         // Required empty public constructor
@@ -42,6 +48,8 @@ public class TemperatureFragment extends Fragment implements View.OnClickListene
         backBT.setOnClickListener(this);
         // Read data from Firebase
         readTemperatureData();
+
+        handler.postDelayed(updateRunnable, UPDATE_INTERVAL);
 
         return view;
     }
@@ -74,6 +82,14 @@ public class TemperatureFragment extends Fragment implements View.OnClickListene
             }
         });
     }
+
+    private Runnable updateRunnable = new Runnable() {
+        @Override
+        public void run() {
+            readTemperatureData();
+            handler.postDelayed(this, UPDATE_INTERVAL);
+        }
+    };
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.backButton) {
