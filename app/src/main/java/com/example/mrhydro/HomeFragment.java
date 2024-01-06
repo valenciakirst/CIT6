@@ -23,7 +23,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 public class HomeFragment extends Fragment implements View.OnClickListener {
-    private static final int UPDATE_INTERVAL = 5000;
+    private static final int UPDATE_INTERVAL = 2000;
 
     FragmentHomeBinding binding;
     DatabaseReference reference;
@@ -103,11 +103,14 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists() && dataSnapshot.getValue() instanceof Double) {
-                    temperatureValue = String.valueOf(dataSnapshot.getValue());
-                    Log.d("TemperatureFragment", "Temperature value from Firebase: " + temperatureValue);
+                    double temperatureCelsius = (double) dataSnapshot.getValue();
+                    double temperatureFahrenheit = celsiusToFahrenheit(temperatureCelsius);
 
-                    if (temperatureValue != null) {
-                        binding.temperatureValue.setText(temperatureValue);
+                    Log.d("TemperatureFragment", "Temperature value from Firebase: " + temperatureCelsius + "°C");
+
+                    if (binding.celsiusValue != null && binding.fahrenheitValue != null) {
+                        binding.celsiusValue.setText(String.format("%.2f°C", temperatureCelsius));
+                        binding.fahrenheitValue.setText(String.format("%.2f°F", temperatureFahrenheit));
                     }
                 }
             }
@@ -118,6 +121,10 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 Log.e("TemperatureFragment", "Failed to read temperature data", databaseError.toException());
             }
         });
+    }
+
+    private double celsiusToFahrenheit(double celsius) {
+        return (celsius * 9 / 5) + 32;
     }
 
     private Runnable updateRunnable = new Runnable() {

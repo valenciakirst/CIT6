@@ -20,7 +20,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 public class HumidityFragment extends Fragment implements View.OnClickListener {
-    private static final int UPDATE_INTERVAL = 5000;
+    private static final int UPDATE_INTERVAL = 2000;
 
     FragmentHumidityBinding binding;
     DatabaseReference reference;
