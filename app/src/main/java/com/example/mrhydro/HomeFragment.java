@@ -109,8 +109,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                     Log.d("TemperatureFragment", "Temperature value from Firebase: " + temperatureCelsius + "°C");
 
                     if (binding.celsiusValue != null && binding.fahrenheitValue != null) {
-                        binding.celsiusValue.setText(String.format("%.2f°C", temperatureCelsius));
-                        binding.fahrenheitValue.setText(String.format("%.2f°F", temperatureFahrenheit));
+                        binding.celsiusValue.setText(String.format("%.2f", temperatureCelsius));
+                        binding.fahrenheitValue.setText(String.format("%.2f", temperatureFahrenheit));
                     }
                 }
             }

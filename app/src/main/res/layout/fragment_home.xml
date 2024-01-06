@@ -62,7 +62,7 @@
                     android:layout_width="173dp"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
-                    android:paddingLeft="10dp"
+                    android:paddingLeft="0dp"
                     android:paddingRight="10dp">
 
                     <TextView
@@ -76,65 +76,57 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:orientation="horizontal"
-                        android:paddingLeft="7dp">
-
-                        <TextView
-                            android:id="@+id/celsiusValue"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:text="0.00"
-                            android:textColor="@color/teal"
-                            android:textSize="20sp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="°C"
-                            android:textColor="@color/teal"
-                            android:textSize="18sp" />
+                        android:orientation="vertical"
+                        android:gravity="center">
 
                         <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="88dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
                             android:orientation="horizontal"
                             android:paddingLeft="7dp">
 
-                        <TextView
-                            android:id="@+id/fahrenheitValue"
-                            android:layout_width="wrap_content"
-                            android:layout_height="35sp"
-                            android:layout_gravity="center_horizontal"
-                            android:text="0.00"
-                            android:textColor="@color/teal"
-                            android:textSize="20sp" />
+                            <TextView
+                                android:id="@+id/celsiusValue"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal"
+                                android:text="0.00"
+                                android:textColor="@color/teal"
+                                android:textSize="30sp" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="°F"
-                            android:textColor="@color/teal"
-                            android:textSize="18sp" />
-                    </LinearLayout>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="°C"
+                                android:textColor="@color/teal"
+                                android:textSize="28sp" />
 
-                    </LinearLayout>
+                        </LinearLayout>
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="TextView" />
-
-                        <TextView
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="TextView" />
+                            android:orientation="horizontal"
+                            android:paddingLeft="7dp"
+                            android:gravity="center">
+
+                            <TextView
+                                android:id="@+id/fahrenheitValue"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal"
+                                android:text="0.00"
+                                android:textColor="@color/teal"
+                                android:textSize="30sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="°F"
+                                android:textColor="@color/teal"
+                                android:textSize="28sp" />
+                        </LinearLayout>
+
                     </LinearLayout>
 
                 </LinearLayout>
