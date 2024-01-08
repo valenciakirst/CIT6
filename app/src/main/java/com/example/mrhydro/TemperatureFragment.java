@@ -7,35 +7,35 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.Spinner;
+
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.github.mikephil.charting.components.Description;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.components.YAxis;
+
 import com.example.mrhydro.databinding.FragmentTemperatureBinding;
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
-import java.util.List;
 
 public class TemperatureFragment extends Fragment implements View.OnClickListener{
     private static final int UPDATE_INTERVAL = 2000;
     FragmentTemperatureBinding binding;
     DatabaseReference reference;
-    LineChart celsiusChart;
     Handler handler = new Handler(Looper.getMainLooper());
-    String[] daysOfMonth = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"};
+    private Spinner dropdownMenu;
+    private FrameLayout tempChartContainer;
+    private LineChart celsiusChart;
+
+
     public TemperatureFragment() {
     }
 
@@ -50,34 +50,18 @@ public class TemperatureFragment extends Fragment implements View.OnClickListene
         binding = FragmentTemperatureBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
 
-        celsiusChart = view.findViewById(R.id.celsiusChart);
 
-        MyXAxisFormatter xAxisFormatter = new MyXAxisFormatter(daysOfMonth);
-        XAxis xAxis = celsiusChart.getXAxis();
-        xAxis.setValueFormatter(xAxisFormatter);
+        dropdownMenu = view.findViewById(R.id.dropdownMenu);
+        tempChartContainer = view.findViewById(R.id.lineChartContainer);
 
-        MyYAxisFormatter yAxisFormatter = new MyYAxisFormatter();
-        YAxis leftYAxis = celsiusChart.getAxisLeft();
-        leftYAxis.setValueFormatter(yAxisFormatter);
-
-        LineDataSet celsiusDataSet = new LineDataSet(dataValues(), "Temperature Data");
-        ArrayList<ILineDataSet> dataSets = new ArrayList<>();
-        dataSets.add(celsiusDataSet);
-        LineData data = new LineData(dataSets);
-
-        Description description = new Description();
-        description.setText("Temperature Chart");
-        celsiusChart.setDescription(description);
-
-        // Set the data to the chart
-        celsiusChart.setData(data);
-        celsiusChart.invalidate();
 
         ImageView backBT = view.findViewById(R.id.backButton);
         backBT.setOnClickListener(this);
 
         MainActivity mainActivity = (MainActivity) requireActivity();
         mainActivity.hideToolbar();
+
+        setupDropdownMenu();
 
         // Read data from Firebase
         readTemperatureData();
@@ -87,41 +71,6 @@ public class TemperatureFragment extends Fragment implements View.OnClickListene
         return view;
     }
 
-
-    private List<Entry> dataValues() {
-        ArrayList<Entry> dataValue = new ArrayList<>();
-        dataValue.add(new Entry(1f, 28.9f));
-        dataValue.add(new Entry(2f, 26.9f));
-        dataValue.add(new Entry(3f, 27.9f));
-        dataValue.add(new Entry(4f, 30.0f));
-        dataValue.add(new Entry(5f, 21.0f));
-        dataValue.add(new Entry(6f, 27.9f));
-        dataValue.add(new Entry(7f, 27.9f));
-        dataValue.add(new Entry(8f, 27.9f));
-        dataValue.add(new Entry(9f, 27.9f));
-        dataValue.add(new Entry(10f, 27.9f));
-        dataValue.add(new Entry(11f, 27.9f));
-        dataValue.add(new Entry(12f, 27.9f));
-        dataValue.add(new Entry(13f, 27.9f));
-        dataValue.add(new Entry(14f, 27.9f));
-        dataValue.add(new Entry(15f, 27.9f));
-        dataValue.add(new Entry(16f, 27.9f));
-        dataValue.add(new Entry(17f, 27.9f));
-        dataValue.add(new Entry(18f, 27.9f));
-        dataValue.add(new Entry(19f, 27.9f));
-        dataValue.add(new Entry(20f, 26.7f));
-        dataValue.add(new Entry(21f, 27.9f));
-        dataValue.add(new Entry(22f, 27.9f));
-        dataValue.add(new Entry(23f, 27.9f));
-        dataValue.add(new Entry(24f, 27.9f));
-        dataValue.add(new Entry(25f, 27.9f));
-        dataValue.add(new Entry(26f, 27.9f));
-        dataValue.add(new Entry(27f, 27.9f));
-        dataValue.add(new Entry(28f, 27.9f));
-
-
-        return dataValue;
-    }
 
     private void readTemperatureData() {
         reference = FirebaseDatabase.getInstance().getReference("DHT");
@@ -176,6 +125,50 @@ public class TemperatureFragment extends Fragment implements View.OnClickListene
             openFragment(new HomeFragment());
         }
     }
+    private void setupDropdownMenu() {
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+                requireContext(),
+                R.array.line_chart_options,  // Add a string array resource for options
+                android.R.layout.simple_spinner_item
+        );
+
+        // Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+
+        dropdownMenu.setAdapter(adapter);
+
+        dropdownMenu.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                String selectedItem = parentView.getItemAtPosition(position).toString();
+
+                showLineChartFragment(selectedItem);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // Do nothing here
+            }
+        });
+    }
+
+    private void showLineChartFragment(String selectedOption) {
+        // Create an instance of the TemperatureChartsFragment
+        TemperatureChartsFragment lineChartFragment = new TemperatureChartsFragment();
+
+        // Pass the selected option to the TemperatureChartsFragment
+        Bundle bundle = new Bundle();
+        bundle.putString("selectedOption", selectedOption);
+        lineChartFragment.setArguments(bundle);
+
+        // Replace the existing fragment with the TemperatureChartsFragment
+        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+        transaction.replace(R.id.tempChartContainer, lineChartFragment);  // Use the correct container ID
+        transaction.commit();
+    }
+
 
     private void openFragment(Fragment fragment) {
         FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
