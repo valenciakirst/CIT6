@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="line_chart_options">
+        <item>Hourly Line Chart</item>
+        <item>Daily Line Chart</item>
+        <item>Weekly Line Chart</item>
+        <item>Monthly Line Chart</item>
+        <item>Yearly Line Chart</item>
+    </string-array>
+</resources>

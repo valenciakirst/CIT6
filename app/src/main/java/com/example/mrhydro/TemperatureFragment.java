@@ -76,6 +76,9 @@ public class TemperatureFragment extends Fragment implements View.OnClickListene
         ImageView backBT = view.findViewById(R.id.backButton);
         backBT.setOnClickListener(this);
 
+        MainActivity mainActivity = (MainActivity) requireActivity();
+        mainActivity.hideToolbar();
+
         // Read data from Firebase
         readTemperatureData();
 

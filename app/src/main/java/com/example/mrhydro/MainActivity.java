@@ -109,4 +109,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             super.onBackPressed();
         }
     }
+    public void hideToolbar() {
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
+    }
+
+    public void showToolbar() {
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().show();
+        }
+    }
+
 }
