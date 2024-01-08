@@ -25,12 +25,17 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class TemperatureFragment extends Fragment implements View.OnClickListener{
-    private static final int UPDATE_INTERVAL = 2000;
+    long lastTimestamp = 0;
+    int UPDATE_INTERVAL = 2000;
     FragmentTemperatureBinding binding;
     DatabaseReference reference;
     LineChart celsiusChart;
@@ -134,6 +139,7 @@ public class TemperatureFragment extends Fragment implements View.OnClickListene
                     double temperatureFahrenheit = celsiusToFahrenheit(temperatureCelsius);
 
                     Log.d("TemperatureFragment", "Temperature value from Firebase: " + temperatureCelsius + "°C");
+                    logTemperatureData(temperatureCelsius, temperatureFahrenheit);
 
                     if (binding.celsiusValue != null && binding.fahrenheitValue != null) {
                         binding.celsiusValue.setText(String.format("%.2f", temperatureCelsius));
@@ -149,6 +155,54 @@ public class TemperatureFragment extends Fragment implements View.OnClickListene
             }
         });
     }
+
+    private void logTemperatureData(double temperatureCelsius, double temperatureFahrenheit) {
+        long currentTimestamp = System.currentTimeMillis();
+
+        // Check if the time interval is greater than 30 minutes
+        if (currentTimestamp - lastTimestamp >= TimeUnit.MINUTES.toMillis(30)) {
+            // Format the timestamp
+            SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+            String formattedTime = dateFormat.format(new Date(currentTimestamp));
+
+            // Log the temperature with timestamp
+            Log.d("TemperatureFragment", "Timestamp: " + formattedTime +
+                    " - Temperature: " + temperatureCelsius + "°C / " + temperatureFahrenheit + "°F");
+
+            // Update the last timestamp
+            lastTimestamp = currentTimestamp;
+
+            // Update the chart with the new data point
+            updateChart(currentTimestamp, temperatureCelsius);
+        }
+    }
+
+    private void updateChart(long timestamp, double temperatureCelsius) {
+        // Add the new data point to the chart
+        LineData data = celsiusChart.getData();
+        ILineDataSet dataSet = data.getDataSetByIndex(0);
+
+        float xValue = getXValueForTimestamp(timestamp);
+        float yValue = (float) temperatureCelsius;
+
+        Entry entry = new Entry(xValue, yValue);
+        dataSet.addEntry(entry);
+
+        // Notify the chart that the data has changed
+        celsiusChart.notifyDataSetChanged();
+        celsiusChart.invalidate();
+    }
+
+    private float getXValueForTimestamp(long timestamp) {
+        // Calculate the day of the month for the timestamp
+        SimpleDateFormat dayFormat = new SimpleDateFormat("d", Locale.getDefault());
+        int dayOfMonth = Integer.parseInt(dayFormat.format(new Date(timestamp)));
+
+        // Return the corresponding x-axis value
+        return (float) dayOfMonth;
+    }
+
+
     private double celsiusToFahrenheit(double celsius) {
         return (celsius * 9 / 5) + 32;
     }
