@@ -7,10 +7,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import android.widget.ImageView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+
+import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.example.mrhydro.databinding.FragmentTemperatureBinding;
@@ -30,12 +31,10 @@ import java.util.List;
 
 public class TemperatureFragment extends Fragment implements View.OnClickListener{
     private static final int UPDATE_INTERVAL = 2000;
-
-
     FragmentTemperatureBinding binding;
     DatabaseReference reference;
-    Handler handler = new Handler(Looper.getMainLooper());
     LineChart celsiusChart;
+    Handler handler = new Handler(Looper.getMainLooper());
     String[] daysOfMonth = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"};
     public TemperatureFragment() {
     }
@@ -51,7 +50,7 @@ public class TemperatureFragment extends Fragment implements View.OnClickListene
         binding = FragmentTemperatureBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
 
-        celsiusChart = view.findViewById(R.id.celciusChart);
+        celsiusChart = view.findViewById(R.id.celsiusChart);
 
         MyXAxisFormatter xAxisFormatter = new MyXAxisFormatter(daysOfMonth);
         XAxis xAxis = celsiusChart.getXAxis();
@@ -66,14 +65,19 @@ public class TemperatureFragment extends Fragment implements View.OnClickListene
         dataSets.add(celsiusDataSet);
         LineData data = new LineData(dataSets);
 
-// Set data to chart
-        celsiusChart.setData(data);
+        Description description = new Description();
+        description.setText("Temperature Chart");
+        celsiusChart.setDescription(description);
 
-// Refresh and redraw the chart
+        // Set the data to the chart
+        celsiusChart.setData(data);
         celsiusChart.invalidate();
 
         ImageView backBT = view.findViewById(R.id.backButton);
         backBT.setOnClickListener(this);
+
+        MainActivity mainActivity = (MainActivity) requireActivity();
+        mainActivity.hideToolbar();
 
         // Read data from Firebase
         readTemperatureData();
@@ -82,6 +86,7 @@ public class TemperatureFragment extends Fragment implements View.OnClickListene
 
         return view;
     }
+
 
     private List<Entry> dataValues() {
         ArrayList<Entry> dataValue = new ArrayList<>();
@@ -124,7 +129,6 @@ public class TemperatureFragment extends Fragment implements View.OnClickListene
         reference.child("Temperature in C").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                // Check if the value is a Double
                 if (dataSnapshot.exists() && dataSnapshot.getValue() instanceof Double) {
                     double temperatureCelsius = (double) dataSnapshot.getValue();
                     double temperatureFahrenheit = celsiusToFahrenheit(temperatureCelsius);
@@ -138,17 +142,6 @@ public class TemperatureFragment extends Fragment implements View.OnClickListene
                 }
             }
 
-
-            private Runnable updateRunnable = new Runnable() {
-                @Override
-                public void run() {
-                    // Fetch new data periodically
-                    readTemperatureData();
-                    // Schedule the next update
-                    handler.postDelayed(this, UPDATE_INTERVAL);
-                }
-            };
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 // Handle errors here
@@ -159,6 +152,7 @@ public class TemperatureFragment extends Fragment implements View.OnClickListene
     private double celsiusToFahrenheit(double celsius) {
         return (celsius * 9 / 5) + 32;
     }
+
     private Runnable updateRunnable = new Runnable() {
         @Override
         public void run() {
@@ -168,17 +162,19 @@ public class TemperatureFragment extends Fragment implements View.OnClickListene
             handler.postDelayed(this, UPDATE_INTERVAL);
         }
     };
-    @Override
-    public void onClick(View v) {
-        if (v.getId() == R.id.backButton) {
-            openFragment(new HomeFragment());
-        }
-    }
+
     @Override
     public void onDestroyView() {
         // Remove the callbacks to prevent memory leaks
         handler.removeCallbacks(updateRunnable);
         super.onDestroyView();
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.backButton) {
+            openFragment(new HomeFragment());
+        }
     }
 
     private void openFragment(Fragment fragment) {
@@ -188,3 +184,4 @@ public class TemperatureFragment extends Fragment implements View.OnClickListene
         transaction.commit();
     }
 }
+

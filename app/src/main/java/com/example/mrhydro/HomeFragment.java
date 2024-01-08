@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -41,6 +42,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         CardView humiditycard = view.findViewById(R.id.HumidityCard);
         CardView mistercard = view.findViewById(R.id.MisterCard);
         ImageView notificationbt = view.findViewById(R.id.notificationIcon);
+
+        MainActivity mainActivity = (MainActivity) requireActivity();
+        mainActivity.showToolbar();
 
         tempcard.setOnClickListener(this);
         humiditycard.setOnClickListener(this);
@@ -94,6 +98,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Log.e("HumidityFragment", "Failed to read humidity data", databaseError.toException());
+                Toast.makeText(getContext(), "Failed to read humidity data", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -109,8 +114,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                     Log.d("TemperatureFragment", "Temperature value from Firebase: " + temperatureCelsius + "°C");
 
                     if (binding.celsiusValue != null && binding.fahrenheitValue != null) {
-                        binding.celsiusValue.setText(String.format("%.2f°C", temperatureCelsius));
-                        binding.fahrenheitValue.setText(String.format("%.2f°F", temperatureFahrenheit));
+                        binding.celsiusValue.setText(String.format("%.2f", temperatureCelsius));
+                        binding.fahrenheitValue.setText(String.format("%.2f", temperatureFahrenheit));
                     }
                 }
             }
@@ -119,6 +124,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 // Handle errors here
                 Log.e("TemperatureFragment", "Failed to read temperature data", databaseError.toException());
+                Toast.makeText(getContext(), "Failed to read temperature data", Toast.LENGTH_SHORT).show();
             }
         });
     }

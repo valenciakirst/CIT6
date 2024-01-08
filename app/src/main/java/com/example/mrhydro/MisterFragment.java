@@ -52,6 +52,8 @@ public class MisterFragment extends Fragment {
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
+            MainActivity mainActivity = (MainActivity) requireActivity();
+            mainActivity.hideToolbar();
         }
     }
 
@@ -60,5 +62,6 @@ public class MisterFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_mister, container, false);
+
     }
 }

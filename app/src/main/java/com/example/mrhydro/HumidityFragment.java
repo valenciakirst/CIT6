@@ -7,12 +7,18 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
-
+import android.widget.Spinner;
+import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.mrhydro.databinding.FragmentHumidityBinding;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.XAxis;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -26,20 +32,30 @@ public class HumidityFragment extends Fragment implements View.OnClickListener {
     DatabaseReference reference;
     Handler handler = new Handler(Looper.getMainLooper());
 
+    private Spinner dropdownMenu;
+    private FrameLayout lineChartContainer;
+
     public HumidityFragment() {
         // Required empty public constructor
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentHumidityBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
+
 
         ImageView backBT = view.findViewById(R.id.backButton);
         backBT.setOnClickListener(this);
 
         readHumidityData();
+        dropdownMenu = view.findViewById(R.id.dropdownMenu);
+        lineChartContainer = view.findViewById(R.id.lineChartContainer);
+
+        MainActivity mainActivity = (MainActivity) requireActivity();
+        mainActivity.hideToolbar();
+        // Setup dropdown menu
+        setupDropdownMenu();
 
         handler.postDelayed(updateRunnable, UPDATE_INTERVAL);
 
@@ -89,4 +105,55 @@ public class HumidityFragment extends Fragment implements View.OnClickListener {
             handler.postDelayed(this, UPDATE_INTERVAL);
         }
     };
+
+    private void setupDropdownMenu() {
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+                requireContext(),
+                R.array.line_chart_options,  // Add a string array resource for options
+                android.R.layout.simple_spinner_item
+        );
+
+        // Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // Apply the adapter to the spinner
+        dropdownMenu.setAdapter(adapter);
+
+        // Set a listener to handle item selection
+        dropdownMenu.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                // Handle the selected item
+                String selectedItem = parentView.getItemAtPosition(position).toString();
+                // You can perform actions based on the selected item
+
+                // For example, show a fragment based on the selected item
+                showLineChartFragment(selectedItem);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // Do nothing here
+            }
+        });
+    }
+
+
+    private void showLineChartFragment(String selectedOption) {
+        // Create an instance of the LineChartFragment
+        HumidityHoursFragment lineChartFragment = new HumidityHoursFragment();
+
+        // Pass the selected option to the LineChartFragment
+        Bundle bundle = new Bundle();
+        bundle.putString("selectedOption", selectedOption);
+        lineChartFragment.setArguments(bundle);
+
+        // Replace the existing fragment with the LineChartFragment
+        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+        transaction.replace(R.id.lineChartContainer, lineChartFragment);
+        transaction.commit();
+    }
+
+
 }

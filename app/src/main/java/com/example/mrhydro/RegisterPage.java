@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 
 public class RegisterPage extends AppCompatActivity {
 
@@ -27,13 +28,12 @@ public class RegisterPage extends AppCompatActivity {
     public void onStart() {
         super.onStart();
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser != null){
+        if (currentUser != null) {
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(intent);
             finish();
         }
     }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,12 +58,12 @@ public class RegisterPage extends AppCompatActivity {
             email = String.valueOf(inputEmail.getText());
             password = String.valueOf(inputPassword.getText());
 
-            if (TextUtils.isEmpty(email)){
+            if (TextUtils.isEmpty(email)) {
                 Toast.makeText(RegisterPage.this, "Enter Email", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            if (TextUtils.isEmpty(password)){
+            if (TextUtils.isEmpty(password)) {
                 Toast.makeText(RegisterPage.this, "Enter Password", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -72,6 +72,8 @@ public class RegisterPage extends AppCompatActivity {
                     .addOnCompleteListener(task -> {
                         progressBar.setVisibility(View.GONE);
                         if (task.isSuccessful()) {
+                            // Registration successful, set display name
+                            setDisplayName("John Doe");
                             Toast.makeText(RegisterPage.this, "Registered Successfully",
                                     Toast.LENGTH_SHORT).show();
                         } else {
@@ -81,5 +83,23 @@ public class RegisterPage extends AppCompatActivity {
                     });
 
         });
+    }
+
+    private void setDisplayName(String displayName) {
+        FirebaseUser user = mAuth.getCurrentUser();
+        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                .setDisplayName(displayName)
+                // You can also set other profile information here like photo URL
+                .build();
+
+        if (user != null) {
+            user.updateProfile(profileUpdates)
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            // Display name updated successfully
+                            // Handle any further actions if needed
+                        }
+                    });
+        }
     }
 }
