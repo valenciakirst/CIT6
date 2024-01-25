@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.example.mrhydro.databinding.FragmentMisterBinding;
-import com.example.mrhydro.databinding.FragmentTemperatureBinding;
 
 
 public class MisterFragment extends Fragment implements View.OnClickListener {
