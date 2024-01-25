@@ -47,14 +47,46 @@ public class TemperatureChartsFragment extends Fragment {
         return view;
     }
 
+    // Add this method to update the chart when the selected option changes
+    public void updateChart(String selectedOption) {
+        View view = getView();
+        if (view != null) {
+            customizeLineChart(view, selectedOption);
+        }
+    }
+
 
     private void customizeLineChart(View view, String selectedOption) {
+        temperatureChart = view.findViewById(R.id.temperatureChart);
+
         switch (selectedOption) {
+            case "Hourly Line Chart":
+                MyXAxisFormatter hourlyXAxisFormatter = new MyXAxisFormatter(hoursOfDay);
+                XAxis hourlyXAxis = temperatureChart.getXAxis();
+                hourlyXAxis.setValueFormatter(hourlyXAxisFormatter);
+
+                MyYAxisFormatter hourlyYAxisFormatter = new MyYAxisFormatter();
+                YAxis hourlyLeftYAxis = temperatureChart.getAxisLeft();
+                hourlyLeftYAxis.setValueFormatter(hourlyYAxisFormatter);
+
+                LineDataSet hourlyTemperatureDataSet = new LineDataSet(dataValues(selectedOption), "Temperature Data");
+                ArrayList<ILineDataSet> hourlyDataSets = new ArrayList<>();
+                hourlyDataSets.add(hourlyTemperatureDataSet);
+                LineData hourlyData = new LineData(hourlyDataSets);
+
+                Description hourlyDescription = new Description();
+                hourlyDescription.setText("Hourly Temperature Chart");
+                temperatureChart.setDescription(hourlyDescription);
+
+                temperatureChart.setPinchZoom(true);
+
+                temperatureChart.setData(hourlyData);
+                temperatureChart.invalidate();
+                break;
+
             case "Daily Line Chart":
                 // Customize for daily chart
-                temperatureChart = view.findViewById(R.id.temperatureChart);
-
-                MyXAxisFormatter dailyXAxisFormatter = new MyXAxisFormatter(hoursOfDay);
+                MyXAxisFormatter dailyXAxisFormatter = new MyXAxisFormatter(daysOfMonth);
                 XAxis dailyXAxis = temperatureChart.getXAxis();
                 dailyXAxis.setValueFormatter(dailyXAxisFormatter);
 
@@ -68,20 +100,18 @@ public class TemperatureChartsFragment extends Fragment {
                 LineData dailyData = new LineData(dailyDataSets);
 
                 Description dailyDescription = new Description();
-                dailyDescription.setText("Hourly Temperature Chart");
+                dailyDescription.setText("Daily Temperature Chart");
                 temperatureChart.setDescription(dailyDescription);
-
-                temperatureChart.setPinchZoom(true);
 
                 temperatureChart.setData(dailyData);
                 temperatureChart.invalidate();
+
+
                 break;
 
             case "Monthly Line Chart":
                 // Customize for monthly chart
-                temperatureChart = view.findViewById(R.id.temperatureChart);
-
-                MyXAxisFormatter monthlyXAxisFormatter = new MyXAxisFormatter(daysOfMonth);
+                MyXAxisFormatter monthlyXAxisFormatter = new MyXAxisFormatter(monthsOfYear);
                 XAxis monthlyXAxis = temperatureChart.getXAxis();
                 monthlyXAxis.setValueFormatter(monthlyXAxisFormatter);
 
@@ -102,44 +132,18 @@ public class TemperatureChartsFragment extends Fragment {
                 temperatureChart.invalidate();
                 break;
 
-            case "Yearly Line Chart":
-                // Customize for yearly chart
-                temperatureChart = view.findViewById(R.id.temperatureChart);
-
-                MyXAxisFormatter yearlyXAxisFormatter = new MyXAxisFormatter(monthsOfYear);
-                XAxis yearlyXAxis = temperatureChart.getXAxis();
-                yearlyXAxis.setValueFormatter(yearlyXAxisFormatter);
-
-                MyYAxisFormatter yearlyYAxisFormatter = new MyYAxisFormatter();
-                YAxis yearlyLeftYAxis = temperatureChart.getAxisLeft();
-                yearlyLeftYAxis.setValueFormatter(yearlyYAxisFormatter);
-
-                LineDataSet yearlyTemperatureDataSet = new LineDataSet(dataValues(selectedOption), "Temperature Data");
-                ArrayList<ILineDataSet> yearlyDataSets = new ArrayList<>();
-                yearlyDataSets.add(yearlyTemperatureDataSet);
-                LineData yearlyData = new LineData(yearlyDataSets);
-
-                Description yearlyDescription = new Description();
-                yearlyDescription.setText("Yearly Temperature Chart");
-                temperatureChart.setDescription(yearlyDescription);
-
-                temperatureChart.setPinchZoom(true);
-
-                temperatureChart.setData(yearlyData);
-                temperatureChart.invalidate();
-                break;
-
             default:
                 // Handle unknown option
                 break;
         }
     }
 
+
     private List<Entry> dataValues(String selectedOption) {
         ArrayList<Entry> dataValue = new ArrayList<>();
 
         switch (selectedOption) {
-            case "Daily Line Chart":
+            case "Hourly Line Chart":
                 // Example data for daily chart
                 for (int i = 0; i < 24; i++) {
                     // Replace these values with actual hourly temperature data
@@ -148,7 +152,7 @@ public class TemperatureChartsFragment extends Fragment {
                 }
                 break;
 
-            case "Monthly Line Chart":
+            case "Daily Line Chart":
                 // Example data for monthly chart
                 for (int i = 0; i < daysOfMonth.length; i++) {
                     // Replace these values with actual daily temperature data
@@ -157,7 +161,7 @@ public class TemperatureChartsFragment extends Fragment {
                 }
                 break;
 
-            case "Yearly Line Chart":
+            case "Monthly Line Chart":
                 // Example data for yearly chart
                 for (int i = 0; i < monthsOfYear.length; i++) {
                     // Replace these values with actual monthly temperature data

@@ -165,9 +165,11 @@ public class TemperatureFragment extends Fragment implements View.OnClickListene
 
         // Replace the existing fragment with the TemperatureChartsFragment
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-        transaction.replace(R.id.tempChartContainer, lineChartFragment);  // Use the correct container ID
+        transaction.replace(R.id.tempChartContainer, lineChartFragment);
+        transaction.addToBackStack(null);  // Add this line to enable back navigation
         transaction.commit();
     }
+
 
 
     private void openFragment(Fragment fragment) {
