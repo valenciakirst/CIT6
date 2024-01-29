@@ -1,5 +1,6 @@
 package com.example.mrhydro;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -170,6 +171,18 @@ public class TemperatureFragment extends Fragment implements View.OnClickListene
         transaction.commit();
     }
 
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            // Landscape mode
+            // Update UI for landscape mode if needed
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            // Portrait mode
+            // Update UI for portrait mode if needed
+        }
+    }
 
 
     private void openFragment(Fragment fragment) {
