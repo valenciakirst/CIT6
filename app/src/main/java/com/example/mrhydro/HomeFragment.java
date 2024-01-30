@@ -10,6 +10,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
+import android.widget.TextView;
+import android.widget.CompoundButton;
+import android.widget.Switch;
+
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -29,14 +33,14 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     FragmentHomeBinding binding;
     DatabaseReference reference;
     Handler handler = new Handler(Looper.getMainLooper());
-    private String humidityValue;
-    private String temperatureValue;
-
+    String humidityValue;
+    boolean isCelsius = true;
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
+        Switch temperatureSwitch = view.findViewById(R.id.switch2);
 
         CardView tempcard = view.findViewById(R.id.TempCard);
         CardView humiditycard = view.findViewById(R.id.HumidityCard);
@@ -46,14 +50,28 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         MainActivity mainActivity = (MainActivity) requireActivity();
         mainActivity.showToolbar();
 
+
         tempcard.setOnClickListener(this);
         humiditycard.setOnClickListener(this);
         mistercard.setOnClickListener(this);
         notificationbt.setOnClickListener(this);
 
-        readHumidityData();
-        readTemperatureData();
+        temperatureSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                // Update temperature unit based on the switch state
+                isCelsius = isChecked;
+                readTemperatureData(); // Update displayed temperature values
 
+                String toastMessage = isChecked ? "Switched to Celsius" : "Switched to Fahrenheit";
+                Toast.makeText(requireContext(), toastMessage, Toast.LENGTH_SHORT).show();
+
+        readHumidityData();
+
+            }
+        });
+
+        readTemperatureData();
         handler.postDelayed(updateRunnable, UPDATE_INTERVAL);
 
         return view;
@@ -109,13 +127,22 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists() && dataSnapshot.getValue() instanceof Double) {
                     double temperatureCelsius = (double) dataSnapshot.getValue();
-                    double temperatureFahrenheit = celsiusToFahrenheit(temperatureCelsius);
+                    double temperatureValue = isCelsius ? temperatureCelsius : celsiusToFahrenheit(temperatureCelsius);
 
-                    Log.d("TemperatureFragment", "Temperature value from Firebase: " + temperatureCelsius + "°C");
+                    Log.d("TemperatureFragment", "Temperature value from Firebase: " + temperatureValue +
+                            (isCelsius ? "°C" : "°F"));
 
-                    if (binding.celsiusValue != null && binding.fahrenheitValue != null) {
-                        binding.celsiusValue.setText(String.format("%.2f", temperatureCelsius));
-                        binding.fahrenheitValue.setText(String.format("%.2f", temperatureFahrenheit));
+                    updateSingleTemperature(temperatureCelsius, temperatureValue);
+                }
+            }
+            private void updateSingleTemperature(double temperatureCelsius, double temperatureValue) {
+                if (binding.singleTemperatureValue != null && binding.singleTemperatureUnit != null) {
+                    if (isCelsius) {
+                        binding.singleTemperatureValue.setText(String.format("%.2f", temperatureCelsius));
+                        binding.singleTemperatureUnit.setText("°C");
+                    } else {
+                        binding.singleTemperatureValue.setText(String.format("%.2f", temperatureValue));
+                        binding.singleTemperatureUnit.setText("°F");
                     }
                 }
             }

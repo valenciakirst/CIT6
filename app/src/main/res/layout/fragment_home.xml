@@ -86,46 +86,32 @@
                             android:paddingLeft="7dp">
 
                             <TextView
-                                android:id="@+id/celsiusValue"
+                                android:id="@+id/singleTemperatureValue"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_horizontal"
                                 android:text="0.00"
                                 android:textColor="@color/teal"
-                                android:textSize="30sp" />
+                                android:textSize="28sp" />
 
                             <TextView
+                                android:id="@+id/singleTemperatureUnit"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="°C"
                                 android:textColor="@color/teal"
-                                android:textSize="28sp" />
+                                android:textSize="26sp" />
 
                         </LinearLayout>
 
-                        <LinearLayout
+                        <Switch
+                            android:id="@+id/switch2"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:paddingLeft="7dp"
-                            android:gravity="center">
+                            android:textColor="@color/teal"
+                            android:textSize="12sp"
+                            android:text="Switch Temperature" />
 
-                            <TextView
-                                android:id="@+id/fahrenheitValue"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center_horizontal"
-                                android:text="0.00"
-                                android:textColor="@color/teal"
-                                android:textSize="30sp" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="°F"
-                                android:textColor="@color/teal"
-                                android:textSize="28sp" />
-                        </LinearLayout>
 
                     </LinearLayout>
 

@@ -58,13 +58,13 @@
             android:paddingRight="105dp">
 
             <ImageView
-                android:layout_width="35dp"
-                android:layout_height="35dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:src="@drawable/baseline_thermostat_24" />
 
             <TextView
-                android:id="@+id/celsiusValue"
+                android:id="@+id/singleTemperatureValue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
@@ -73,6 +73,7 @@
                 android:textSize="28sp" />
 
             <TextView
+                android:id="@+id/singleTemperatureUnit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="°C"
@@ -89,29 +90,16 @@
             android:paddingTop="3dp"
             android:paddingRight="105dp">
 
-            <ImageView
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:layout_gravity="center_horizontal"
-                android:src="@drawable/baseline_thermostat_24" />
-
-            <TextView
-                android:id="@+id/fahrenheitValue"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="0.00"
-                android:textColor="@color/teal"
-                android:textSize="28sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="°F"
-                android:textColor="@color/teal"
-                android:textSize="26sp" />
-
         </LinearLayout>
+
+        <Switch
+            android:id="@+id/switch1"
+            android:layout_width="match_parent"
+            android:textSize="20sp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:textColor="@color/teal"
+            android:text="Switch Temperature" />
 
 
     </LinearLayout>
