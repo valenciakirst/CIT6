@@ -34,7 +34,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     DatabaseReference reference;
     Handler handler = new Handler(Looper.getMainLooper());
     String humidityValue;
-    boolean isCelsius = true;
+    boolean isCelsius = false;
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

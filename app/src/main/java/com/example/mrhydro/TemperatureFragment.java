@@ -33,7 +33,7 @@ public class TemperatureFragment extends Fragment implements View.OnClickListene
     FragmentTemperatureBinding binding;
     DatabaseReference reference;
     Handler handler = new Handler(Looper.getMainLooper());
-    boolean isCelsius = true;
+    boolean isCelsius = false;
     private Spinner dropdownMenu;
     private FrameLayout tempChartContainer;
     private LineChart celsiusChart;
