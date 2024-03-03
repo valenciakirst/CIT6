@@ -11,7 +11,10 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -45,6 +48,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        // Create the Notification Channel
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "TemperatureAlertChannel";
+            String description = "Channel for Temperature Alerts";
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel channel = new NotificationChannel("CHANNEL_ID", name, importance);
+            channel.setDescription(description);
+
+            // Register the channel with the system; you can't change the importance or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+
 
         // Retrieve the current user
         user = auth.getCurrentUser();
@@ -83,8 +100,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         openFragment(new ProfileFragment());
     } else if (itemID == R.id.nav_settings){
         openFragment(new SettingsFragment());
-    } else if (itemID == R.id.nav_about){
-        openFragment(new AboutFragment());
     } else if (itemID == R.id.nav_logout){
         Toast.makeText(this, "Logout", Toast.LENGTH_SHORT).show();
         FirebaseAuth.getInstance().signOut();

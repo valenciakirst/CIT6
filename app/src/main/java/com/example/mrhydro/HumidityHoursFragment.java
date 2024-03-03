@@ -48,7 +48,7 @@ public class HumidityHoursFragment extends Fragment {
 
     private void customizeLineChart(View view, String selectedOption) {
         switch (selectedOption) {
-            case "Daily Line Chart":
+            case "Hourly Line Chart":
                 // Customize for daily chart
                 humidityChart = view.findViewById(R.id.humidityChart);
 
@@ -73,7 +73,7 @@ public class HumidityHoursFragment extends Fragment {
                 humidityChart.invalidate();
                 break;
 
-            case "Monthly Line Chart":
+            case "Daily Line Chart":
                 // Customize for monthly chart
                 humidityChart = view.findViewById(R.id.humidityChart);
 
@@ -91,14 +91,14 @@ public class HumidityHoursFragment extends Fragment {
                 LineData monthlyData = new LineData(monthlyDataSets);
 
                 Description monthlyDescription = new Description();
-                monthlyDescription.setText("Monthly Humidity Chart");
+                monthlyDescription.setText("Daily Humidity Chart");
                 humidityChart.setDescription(monthlyDescription);
 
                 humidityChart.setData(monthlyData);
                 humidityChart.invalidate();
                 break;
 
-            case "Yearly Line Chart":
+            case "Monthly Line Chart":
                 // Customize for yearly chart
                 humidityChart = view.findViewById(R.id.humidityChart);
 
@@ -116,7 +116,7 @@ public class HumidityHoursFragment extends Fragment {
                 LineData yearlyData = new LineData(yearlyDataSets);
 
                 Description yearlyDescription = new Description();
-                yearlyDescription.setText("Yearly Humidity Chart");
+                yearlyDescription.setText("Monthly Humidity Chart");
                 humidityChart.setDescription(yearlyDescription);
 
                 humidityChart.setPinchZoom(true);
@@ -135,7 +135,7 @@ public class HumidityHoursFragment extends Fragment {
         ArrayList<Entry> dataValue = new ArrayList<>();
 
         switch (selectedOption) {
-            case "Daily Line Chart":
+            case "Hourly Line Chart":
                 // Example data for daily chart
                 for (int i = 0; i < 24; i++) {
                     // Replace these values with actual hourly humidity data
@@ -144,7 +144,7 @@ public class HumidityHoursFragment extends Fragment {
                 }
                 break;
 
-            case "Monthly Line Chart":
+            case "Daily Line Chart":
                 // Example data for monthly chart
                 for (int i = 0; i < daysOfMonth.length; i++) {
                     // Replace these values with actual daily humidity data
@@ -153,7 +153,7 @@ public class HumidityHoursFragment extends Fragment {
                 }
                 break;
 
-            case "Yearly Line Chart":
+            case "Monthly Line Chart":
                 // Example data for yearly chart
                 for (int i = 0; i < monthsOfYear.length; i++) {
                     // Replace these values with actual monthly humidity data

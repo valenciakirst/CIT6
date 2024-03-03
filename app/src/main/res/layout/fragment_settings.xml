@@ -35,18 +35,7 @@
         app:layout_constraintHorizontal_bias="0.476"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:drawableEnd="@drawable/baseline_arrow_forward_ios_24"
-            android:padding="15dp"
-            android:text="Account Settings"
-            android:textSize="18sp" />
-
-    </LinearLayout>
+        app:layout_constraintVertical_bias="0.0"/>
 
     <LinearLayout
         android:layout_width="390dp"
@@ -63,9 +52,9 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Notifications"
             android:padding="3dp"
-            android:paddingStart="15dp"/>
+            android:paddingStart="15dp"
+            android:text="Notifications" />
 
         <Switch
             android:layout_width="match_parent"
@@ -73,16 +62,8 @@
             android:background="@color/white"
             android:padding="15dp"
             android:text="@string/notifmute"
-            android:textSize="18sp" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Notification sound"
             android:textSize="18sp"
-            android:padding="15dp"
-            android:background="@color/white"
-            android:drawableEnd="@drawable/baseline_arrow_forward_ios_24"/>
+            android:id="@+id/notificationSwitch"/>
 
     </LinearLayout>
 
