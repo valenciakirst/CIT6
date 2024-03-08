@@ -1,5 +1,14 @@
 package com.example.mrhydro;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.Intent;
+import android.os.Build;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,14 +19,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.content.Intent;
-import android.os.Build;
-import android.os.Bundle;
-import android.view.MenuItem;
-import android.widget.Toast;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -45,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
         toolbar.setTitle("");
         toolbar.setSubtitle("");
+
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -61,7 +63,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }
-
 
         // Retrieve the current user
         user = auth.getCurrentUser();
@@ -88,25 +89,41 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
 
-
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int itemId = item.getItemId();
+        if (itemId == R.id.action_new_icon) {
+            // Handle click on the new icon
+            Intent intent = new Intent(MainActivity.this, ConfigurationActivity.class);
+            startActivity(intent);
+            Toast.makeText(MainActivity.this, "New Icon Clicked", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-    int itemID = item.getItemId();
-    if (itemID == R.id.nav_home){
-        openFragment(new HomeFragment());
-    } else if (itemID == R.id.nav_profile){
-        openFragment(new ProfileFragment());
-    } else if (itemID == R.id.nav_settings){
-        openFragment(new SettingsFragment());
-    } else if (itemID == R.id.nav_logout){
-        Toast.makeText(this, "Logout", Toast.LENGTH_SHORT).show();
-        FirebaseAuth.getInstance().signOut();
-        Intent intent = new Intent(getApplicationContext(), LoginPage.class);
-        startActivity(intent);
-        finish();
-    }
+        int itemID = item.getItemId();
+        if (itemID == R.id.nav_home) {
+            openFragment(new HomeFragment());
+        } else if (itemID == R.id.nav_profile) {
+            openFragment(new ProfileFragment());
+        } else if (itemID == R.id.nav_settings) {
+            openFragment(new SettingsFragment());
+        } else if (itemID == R.id.nav_logout) {
+            Toast.makeText(this, "Logout", Toast.LENGTH_SHORT).show();
+            FirebaseAuth.getInstance().signOut();
+            Intent intent = new Intent(getApplicationContext(), LoginPage.class);
+            startActivity(intent);
+            finish();
+        }
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -116,14 +133,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         transaction.replace(R.id.fragment_container, fragment);
         transaction.commit();
     }
+
     @Override
-    public void onBackPressed(){
-        if(drawerLayout.isDrawerOpen(GravityCompat.START)){
+    public void onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
         }
     }
+
     public void hideToolbar() {
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
@@ -135,5 +154,4 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             getSupportActionBar().show();
         }
     }
-
 }

@@ -5,4 +5,11 @@
         <item>Daily Line Chart</item>
         <item>Monthly Line Chart</item>
     </string-array>
+
+        <string-array name="DHT22">
+            <item>Group 1</item>
+            <item>Group 2</item>
+            <item>Group 3</item>
+        </string-array>
+
 </resources>

@@ -1,31 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".LoginPage">
 
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="64dp"
+        app:srcCompat="@drawable/logofinal" />
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
         android:fontFamily="serif-monospace"
         android:text="Mr. Hydro"
+        android:textColor="@color/darknavy"
         android:textSize="25sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.194" />
+        android:textStyle="bold" />
 
     <EditText
         android:id="@+id/LoginUsernameInput"
-        android:layout_width="300dp"
+        android:layout_width="match_parent"
         android:layout_height="48dp"
+        android:layout_gravity="center"
+        android:layout_marginStart="28dp"
         android:layout_marginTop="15dp"
+        android:layout_marginEnd="28dp"
         android:background="@drawable/back"
         android:drawableStart="@drawable/baseline_person_24"
         android:drawablePadding="10dp"
@@ -33,68 +42,91 @@
         android:hint="Email"
         android:inputType="text"
         android:paddingLeft="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
     <EditText
         android:id="@+id/LoginPasswordInput"
-        android:layout_width="300dp"
+        android:layout_width="match_parent"
         android:layout_height="48dp"
+        android:layout_gravity="center"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="28dp"
         android:background="@drawable/back"
         android:drawableStart="@drawable/baseline_lock_24"
         android:drawablePadding="8dp"
         android:ems="10"
         android:hint="Password"
         android:inputType="textPassword"
-        android:paddingLeft="10dp"
-        app:layout_constraintBottom_toTopOf="@+id/LoginBtn"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/LoginUsernameInput"
-        app:layout_constraintVertical_bias="0.488"
-        app:layout_goneMarginTop="10dp" />
+        android:paddingLeft="10dp" />
 
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:layout_gravity="center"
+        android:visibility="gone" />
 
     <Button
         android:id="@+id/LoginBtn"
-        android:layout_width="300dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="28dp"
+        android:background="@drawable/back"
         android:paddingLeft="105dp"
         android:paddingRight="105dp"
         android:text="Login"
-        android:textSize="18dp"
-        android:background="@drawable/back"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.549" />
+        android:textSize="18dp" />
 
 
     <TextView
         android:id="@+id/RegisterText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
         android:text="Don't have an account? Sign up now"
-        android:textSize="15sp"
         android:textColor="@color/navy"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/LoginBtn"
-        app:layout_constraintVertical_bias="0.093" />
+        android:textSize="15sp" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <View
+        android:id="@+id/divider"
+        android:layout_width="300dp"
+        android:layout_height="3dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:background="?android:attr/listDivider"
+        android:backgroundTint="@color/darknavy" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp">
+
+        <ImageView
+            android:id="@+id/google"
+            android:layout_width="54dp"
+            android:layout_height="54dp"
+            android:layout_marginRight="32dp"
+            app:srcCompat="@drawable/google" />
+
+        <ImageView
+            android:id="@+id/facebook"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:layout_marginRight="32dp"
+            app:srcCompat="@drawable/facebook" />
+
+        <ImageView
+            android:id="@+id/yahoo"
+            android:layout_width="54dp"
+            android:layout_height="54dp"
+            app:srcCompat="@drawable/yahoo" />
+    </LinearLayout>
+
+
+</LinearLayout>

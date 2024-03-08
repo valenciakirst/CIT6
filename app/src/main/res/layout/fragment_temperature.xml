@@ -95,10 +95,12 @@
         <Switch
             android:id="@+id/switch1"
             android:layout_width="match_parent"
-            android:textSize="20sp"
+            android:textSize="18sp"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="30dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:textColor="@color/teal"
+            android:textColor="@color/white"
             android:text="Switch Temperature" />
 
 

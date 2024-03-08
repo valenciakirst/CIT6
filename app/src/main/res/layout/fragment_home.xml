@@ -1,204 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".HomeFragment">
+    tools:context=".HomeFragment"
+    tools:ignore="ContentDescription"
+    android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/DashboardLogoText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
-        android:text="Mr.Hydro"
-        android:textColor="@color/navy"
-        android:textSize="19sp"
-        android:textStyle="bold"
+    <Spinner
+        android:id="@+id/sensormenu"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="5dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.025" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:elevation="5dp"
+        android:text="Active Sensors and Gadgets"
+        android:textColor="@color/navy"
+        android:textSize="16sp" />
 
     <LinearLayout
         android:id="@+id/gridLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="24dp"
-        android:layout_marginTop="28dp"
-        android:layout_marginRight="24dp"
+        android:layout_marginBottom="20dp"
         android:columnCount="2"
         android:orientation="vertical"
         android:rowCount="3"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/DashboardLogoText">
+        app:layout_constraintTop_toBottomOf="@+id/sensormenu"
+        app:layout_constraintVertical_bias="0.789">
 
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/TempCard"
+        <FrameLayout
+            android:id="@+id/sensorWidgets"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:layout_row="1"
-            android:layout_rowWeight="1"
-            android:layout_column="0"
-            android:layout_columnWeight="1"
-            android:layout_margin="10dp"
-            android:outlineSpotShadowColor="@color/blue"
-            app:cardCornerRadius="15dp"
-            app:cardElevation="12dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/navy"
-                android:foregroundTint="#673AB7"
-                android:orientation="horizontal"
-                android:padding="20dp">
-
-                <LinearLayout
-                    android:layout_width="173dp"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:paddingLeft="0dp"
-                    android:paddingRight="10dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:text="Temperature"
-                        android:textColor="@color/white"
-                        android:textSize="21sp" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical"
-                        android:gravity="center">
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:paddingLeft="7dp">
-
-                            <TextView
-                                android:id="@+id/singleTemperatureValue"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center_horizontal"
-                                android:text="0.00"
-                                android:textColor="@color/teal"
-                                android:textSize="28sp" />
-
-                            <TextView
-                                android:id="@+id/singleTemperatureUnit"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="°C"
-                                android:textColor="@color/teal"
-                                android:textSize="26sp" />
-
-                        </LinearLayout>
-
-                        <Switch
-                            android:id="@+id/switch2"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/teal"
-                            android:textSize="12sp"
-                            android:text="Switch Temperature" />
-
-
-                    </LinearLayout>
-
-                </LinearLayout>
-
-                <ImageView
-                    android:layout_width="129dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center_horizontal"
-                    android:src="@drawable/baseline_thermostat_24" />
-
-
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/HumidityCard"
-            android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:layout_row="1"
-            android:layout_rowWeight="1"
-            android:layout_column="1"
-            android:layout_columnWeight="1"
-            android:layout_margin="10dp"
-            android:outlineSpotShadowColor="@color/blue"
-            app:cardCornerRadius="15dp"
-            app:cardElevation="15dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/navy"
-                android:orientation="horizontal"
-                android:padding="20dp">
-
-
-                <LinearLayout
-                    android:layout_width="176dp"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="10dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:text="Humidity"
-                        android:textColor="@color/white"
-                        android:textSize="23sp" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal"
-                        android:paddingLeft="5dp">
-
-                        <TextView
-                            android:id="@+id/humidityValue"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:text="0.00"
-                            android:textColor="@color/teal"
-                            android:textSize="50sp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="%"
-                            android:textColor="@color/teal"
-                            android:textSize="48sp"/>
-                    </LinearLayout>
-
-                </LinearLayout>
-
-                <ImageView
-                    android:layout_width="125dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center_horizontal"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="20dp"
-                    android:src="@drawable/humidity" />
-
-
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
+            android:layout_height="340dp" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/MisterCard"
@@ -208,7 +59,8 @@
             android:layout_rowWeight="1"
             android:layout_column="0"
             android:layout_columnWeight="1"
-            android:layout_margin="10dp"
+            android:layout_marginLeft="38dp"
+            android:layout_marginRight="38dp"
             android:outlineSpotShadowColor="@color/blue"
             app:cardCornerRadius="15dp"
             app:cardElevation="12dp">
@@ -244,10 +96,10 @@
                         android:textColor="@color/teal" />
 
                     <ToggleButton
+                        android:id="@+id/MisterSwitch"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="ToggleButton"
-                        android:id="@+id/MisterSwitch"/>
+                        android:text="ToggleButton" />
                 </LinearLayout>
 
 
@@ -255,7 +107,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_horizontal"
-                    android:src="@drawable/mister_hose" />
+                    android:src="@drawable/mister_hose"
+                    tools:ignore="ContentDescription" />
 
 
             </LinearLayout>
@@ -263,20 +116,5 @@
 
     </LinearLayout>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:elevation="5dp"
-        android:text="Active Sensors and Gadgets"
-        android:textColor="@color/navy"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toTopOf="@+id/gridLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
 
-
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".WifiFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp">
+
+
+
+        <TextView
+            android:id="@+id/groupnametext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Enter sensor group name:"
+            android:textSize="21sp"
+            android:layout_margin="5dp"/>
+
+        <EditText
+            android:id="@+id/sensorgroupname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="enter here"
+            android:textSize="21sp"
+            android:padding="10dp"
+            android:background="@drawable/back"
+            android:layout_margin="5dp"/>
+
+        <TextView
+            android:id="@+id/sensoortypetext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="Enter sensor type:"
+            android:textSize="21sp" />
+
+        <EditText
+            android:id="@+id/sensortype"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPassword"
+            android:hint="enter here"
+            android:textSize="21sp"
+            android:padding="10dp"
+            android:background="@drawable/back"
+            android:layout_margin="5dp"/>
+
+        <TextView
+            android:id="@+id/pintext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Enter pin:"
+            android:textSize="21sp"
+            android:layout_margin="5dp"/>
+
+        <EditText
+            android:id="@+id/pin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPassword"
+            android:hint="enter here"
+            android:textSize="21sp"
+            android:padding="10dp"
+            android:background="@drawable/back"
+            android:layout_margin="5dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Choose WiFi connection:"
+            android:textSize="21sp"
+            android:layout_margin="5dp"/>
+
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="38dp"
+            android:layout_margin="5dp"
+            android:background="@drawable/back"
+            tools:ignore="TouchTargetSizeCheck">
+
+        </Spinner>
+
+
+        <Button
+            android:id="@+id/sensorbutton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add"
+            android:layout_margin="20dp"
+            android:layout_gravity="center"
+            android:background="@drawable/back"/>
+
+    </LinearLayout>
+
+</FrameLayout>
