@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".WifiFragment"
+    android:id="@+id/fragment_container">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp">
+
+
+
+        <TextView
+            android:id="@+id/textView5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Enter WiFi SSID"
+            android:textSize="21sp"
+            android:layout_margin="10dp"/>
+
+        <EditText
+            android:id="@+id/ssidwifi"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="enter here"
+            android:textSize="21sp"
+            android:padding="10dp"
+            android:background="@drawable/back"
+            android:layout_margin="10dp"/>
+        <TextView
+            android:id="@+id/text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Enter WiFi Password"
+            android:textSize="21sp"
+            android:layout_margin="10dp"/>
+
+        <EditText
+            android:id="@+id/passwordwifi"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPassword"
+            android:hint="enter here"
+            android:textSize="21sp"
+            android:padding="10dp"
+            android:background="@drawable/back"
+            android:layout_margin="10dp"/>
+
+        <Button
+            android:id="@+id/wifiaddbutton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add"
+            android:layout_margin="20dp"
+            android:layout_gravity="center"
+            android:background="@drawable/back"/>
+
+    </LinearLayout>
+
+</FrameLayout>

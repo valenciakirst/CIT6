@@ -15,7 +15,6 @@ import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.CompoundButton;
 import android.widget.Toast;
-import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -42,19 +41,14 @@ public class TemperatureFragment extends Fragment implements View.OnClickListene
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment using the generated binding class
         binding = FragmentTemperatureBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
         Switch temperatureSwitch = view.findViewById(R.id.switch1);
 
         dropdownMenu = view.findViewById(R.id.dropdownMenu);
         tempChartContainer = view.findViewById(R.id.lineChartContainer);
+//        celsiusChart = view.findViewById(R.id.celsiusChart);
 
         ImageView backBT = view.findViewById(R.id.backButton);
         backBT.setOnClickListener(this);
@@ -95,8 +89,9 @@ public class TemperatureFragment extends Fragment implements View.OnClickListene
                             (isCelsius ? "°C" : "°F"));
 
                     updateSingleTemperature(temperatureCelsius, temperatureValue);
-                    }
                 }
+            }
+
             private void updateSingleTemperature(double temperatureCelsius, double temperatureValue) {
                 if (binding.singleTemperatureValue != null && binding.singleTemperatureUnit != null) {
                     if (isCelsius) {
