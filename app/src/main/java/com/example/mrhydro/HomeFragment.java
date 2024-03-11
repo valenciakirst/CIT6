@@ -1,6 +1,11 @@
 package com.example.mrhydro;
 
+import android.Manifest;
+import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -8,15 +13,20 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.Toast;
-import android.widget.TextView;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.Switch;
-
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -28,66 +38,69 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 public class HomeFragment extends Fragment implements View.OnClickListener {
-    private static final int UPDATE_INTERVAL = 2000;
+
 
     FragmentHomeBinding binding;
     DatabaseReference reference;
     Handler handler = new Handler(Looper.getMainLooper());
-    String humidityValue;
-    boolean isCelsius = false;
+    Spinner sensorMenu;
+
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
-        Switch temperatureSwitch = view.findViewById(R.id.switch2);
 
-        CardView tempcard = view.findViewById(R.id.TempCard);
-        CardView humiditycard = view.findViewById(R.id.HumidityCard);
+        FrameLayout frameLayout = view.findViewById(R.id.sensorWidgets);
+
+        if (frameLayout != null) {
+            // Initially, replace the FrameLayout with HomeFragment content
+            if (savedInstanceState == null) {
+                getChildFragmentManager().beginTransaction()
+                        .replace(R.id.sensorWidgets, new SensorsFragment())
+                        .commit();
+            }
+        }
+
         CardView mistercard = view.findViewById(R.id.MisterCard);
-        ImageView notificationbt = view.findViewById(R.id.notificationIcon);
+        sensorMenu = view.findViewById(R.id.sensormenu);
 
         MainActivity mainActivity = (MainActivity) requireActivity();
         mainActivity.showToolbar();
 
-
-        tempcard.setOnClickListener(this);
-        humiditycard.setOnClickListener(this);
         mistercard.setOnClickListener(this);
-        notificationbt.setOnClickListener(this);
 
-        temperatureSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                // Update temperature unit based on the switch state
-                isCelsius = isChecked;
-                readTemperatureData(); // Update displayed temperature values
+        setupDropdownMenu();
 
-                String toastMessage = isChecked ? "Switched to Celsius" : "Switched to Fahrenheit";
-                Toast.makeText(requireContext(), toastMessage, Toast.LENGTH_SHORT).show();
-
-        readHumidityData();
-
-            }
-        });
-
-        readTemperatureData();
-        handler.postDelayed(updateRunnable, UPDATE_INTERVAL);
 
         return view;
     }
 
+    private void openSensorsFragment() {
+        SensorsFragment sensorsFragment = new SensorsFragment();
+
+        // Replace the existing fragment with SensorsFragment
+        getChildFragmentManager().beginTransaction()
+                .replace(R.id.sensorWidgets, sensorsFragment)
+                .addToBackStack(null)
+                .commit();
+    }
+
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.TempCard) {
-            openFragment(new TemperatureFragment());
-        } else if (v.getId() == R.id.HumidityCard) {
-            openFragment(new HumidityFragment());
-        } else if (v.getId() == R.id.MisterCard) {
+        if (v.getId() == R.id.MisterCard) {
             openFragment(new MisterFragment());
-        } else if (v.getId() == R.id.notificationIcon) {
-            // Start a new activity
-            startActivity(new Intent(getActivity(), NotificationsActivity.class));
+        }
+    }
+
+    private void handleMisterSwitch(boolean isChecked) {
+        if (isChecked) {
+            showToast("Mister turned ON");
+            // Perform any other actions you need when the mister is turned ON
+        } else {
+            showToast("Mister turned OFF");
+            // Perform any other actions you need when the mister is turned OFF
         }
     }
 
@@ -98,81 +111,40 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         transaction.commit();
     }
 
-    private void readHumidityData() {
-        reference = FirebaseDatabase.getInstance().getReference("DHT");
-        reference.child("Humidity").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists() && dataSnapshot.getValue() instanceof Double) {
-                    humidityValue = String.valueOf(dataSnapshot.getValue());
-                    Log.d("HumidityFragment", "Humidity value from Firebase: " + humidityValue);
+    private void setupDropdownMenu() {
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+                requireContext(),
+                R.array.DHT22,  // Add a string array resource for options
+                android.R.layout.simple_spinner_item
+        );
 
-                    if (humidityValue != null && !humidityValue.isEmpty()) {
-                        binding.humidityValue.setText(humidityValue);
-                    }
-                }
+        // Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        sensorMenu.setAdapter(adapter);
+
+        sensorMenu.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                String selectedItem = parentView.getItemAtPosition(position).toString();
+
+
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.e("HumidityFragment", "Failed to read humidity data", databaseError.toException());
-                Toast.makeText(getContext(), "Failed to read humidity data", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-    private void readTemperatureData() {
-        reference = FirebaseDatabase.getInstance().getReference("DHT");
-        reference.child("Temperature in C").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists() && dataSnapshot.getValue() instanceof Double) {
-                    double temperatureCelsius = (double) dataSnapshot.getValue();
-                    double temperatureValue = isCelsius ? temperatureCelsius : celsiusToFahrenheit(temperatureCelsius);
-
-                    Log.d("TemperatureFragment", "Temperature value from Firebase: " + temperatureValue +
-                            (isCelsius ? "°C" : "°F"));
-
-                    updateSingleTemperature(temperatureCelsius, temperatureValue);
-                }
-            }
-            private void updateSingleTemperature(double temperatureCelsius, double temperatureValue) {
-                if (binding.singleTemperatureValue != null && binding.singleTemperatureUnit != null) {
-                    if (isCelsius) {
-                        binding.singleTemperatureValue.setText(String.format("%.2f", temperatureCelsius));
-                        binding.singleTemperatureUnit.setText("°C");
-                    } else {
-                        binding.singleTemperatureValue.setText(String.format("%.2f", temperatureValue));
-                        binding.singleTemperatureUnit.setText("°F");
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                // Handle errors here
-                Log.e("TemperatureFragment", "Failed to read temperature data", databaseError.toException());
-                Toast.makeText(getContext(), "Failed to read temperature data", Toast.LENGTH_SHORT).show();
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // Do nothing here
             }
         });
     }
 
-    private double celsiusToFahrenheit(double celsius) {
-        return (celsius * 9 / 5) + 32;
+    private void showToast(String message) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
     }
-
-    private Runnable updateRunnable = new Runnable() {
-        @Override
-        public void run() {
-            readHumidityData();
-            readTemperatureData();
-            handler.postDelayed(this, UPDATE_INTERVAL);
-        }
-    };
 
     @Override
     public void onDestroyView() {
-        // Remove the callbacks to prevent memory leaks
-        handler.removeCallbacks(updateRunnable);
         super.onDestroyView();
     }
 }

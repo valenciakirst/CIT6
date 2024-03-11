@@ -48,7 +48,12 @@ public class NotificationsActivity extends AppCompatActivity {
 
         // Use your existing notification creation logic here
         createNotification(notificationId, message);
+
+        // Add the notification to Firebase
+        FirebaseNotification firebaseNotification = new FirebaseNotification(message, timestamp);
+        firebaseNotification.addNotificationToFirebase();
     }
+
 
     private void createNotification(int notificationId, String message) {
         // Your existing notification creation logic here
