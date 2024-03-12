@@ -8,6 +8,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +32,12 @@ public class NotificationsActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
         addSampleNotifications();
+    }
+
+    private void addNotificationToFirebase(String message, long timestamp) {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("notifications");
+        NotificationItem notification = new NotificationItem(notificationIdCounter++, message, timestamp);
+        databaseReference.child(String.valueOf(notification.getId())).setValue(notification);
     }
 
     private void addSampleNotifications() {
