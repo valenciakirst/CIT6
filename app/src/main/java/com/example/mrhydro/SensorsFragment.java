@@ -1,11 +1,7 @@
 package com.example.mrhydro;
 
-import android.Manifest;
-import android.app.PendingIntent;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -14,20 +10,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
-import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.example.mrhydro.databinding.FragmentHomeBinding;
 import com.example.mrhydro.databinding.FragmentSensorsBinding;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -47,6 +37,8 @@ public class SensorsFragment extends Fragment implements View.OnClickListener {
     private String humidityValue;
     private String temperatureValue;
     private boolean isCelsius = true;
+    String PREFS_NAME = "MyPrefsFile";
+    String IS_CELSIUS_KEY = "isCelsius";
     private boolean isNotificationSentForTemperature = false;
     Switch temperatureSwitch;
 
@@ -70,6 +62,7 @@ public class SensorsFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 isCelsius = isChecked;
+                saveTemperatureUnitState(isCelsius);
                 readTemperatureData();
                 String toastMessage = isChecked ? "Switched to Celsius" : "Switched to Fahrenheit";
                 Toast.makeText(requireContext(), toastMessage, Toast.LENGTH_SHORT).show();
@@ -77,6 +70,8 @@ public class SensorsFragment extends Fragment implements View.OnClickListener {
             }
         });
 
+        isCelsius = getTemperatureUnitState();
+        temperatureSwitch.setChecked(isCelsius);
         readTemperatureData();
         handler.postDelayed(updateRunnable, UPDATE_INTERVAL);
 
@@ -141,24 +136,14 @@ public class SensorsFragment extends Fragment implements View.OnClickListener {
                     double temperatureCelsius = (double) dataSnapshot.getValue();
                     double temperatureValue = isCelsius ? temperatureCelsius : celsiusToFahrenheit(temperatureCelsius);
 
-                    Log.d("TemperatureFragment", "Temperature value from Firebase: " + temperatureValue +
-                            (isCelsius ? "°C" : "°F"));
-
                     updateSingleTemperature(temperatureCelsius, temperatureValue);
-
-
                 }
             }
 
             private void updateSingleTemperature(double temperatureCelsius, double temperatureValue) {
                 if (binding.singleTemperatureValue != null && binding.singleTemperatureUnit != null) {
-                    if (isCelsius) {
-                        binding.singleTemperatureValue.setText(String.format("%.2f", temperatureCelsius));
-                        binding.singleTemperatureUnit.setText("°C");
-                    } else {
-                        binding.singleTemperatureValue.setText(String.format("%.2f", temperatureValue));
-                        binding.singleTemperatureUnit.setText("°F");
-                    }
+                    binding.singleTemperatureValue.setText(String.format("%.2f", temperatureValue));
+                    binding.singleTemperatureUnit.setText(isCelsius ? "°C" : "°F");
                 }
             }
 
@@ -172,6 +157,17 @@ public class SensorsFragment extends Fragment implements View.OnClickListener {
 
     private double celsiusToFahrenheit(double celsius) {
         return (celsius * 9 / 5) + 32;
+    }
+
+    private void saveTemperatureUnitState(boolean isCelsius) {
+        SharedPreferences.Editor editor = requireActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit();
+        editor.putBoolean(IS_CELSIUS_KEY, isCelsius);
+        editor.apply();
+    }
+
+    private boolean getTemperatureUnitState() {
+        SharedPreferences prefs = requireActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getBoolean(IS_CELSIUS_KEY, false); // Default to false (Fahrenheit)
     }
 
     private void showToast(String message) {

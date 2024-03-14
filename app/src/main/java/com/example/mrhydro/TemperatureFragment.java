@@ -1,5 +1,7 @@
 package com.example.mrhydro;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -33,6 +35,9 @@ public class TemperatureFragment extends Fragment implements View.OnClickListene
     DatabaseReference reference;
     Handler handler = new Handler(Looper.getMainLooper());
     boolean isCelsius = false;
+    String PREFS_NAME = "MyPrefsFile";
+    String IS_CELSIUS_KEY = "isCelsius";
+    Switch temperatureSwitch;
     private Spinner dropdownMenu;
     private FrameLayout tempChartContainer;
     private LineChart celsiusChart;
@@ -44,7 +49,7 @@ public class TemperatureFragment extends Fragment implements View.OnClickListene
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentTemperatureBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
-        Switch temperatureSwitch = view.findViewById(R.id.switch1);
+        temperatureSwitch = view.findViewById(R.id.switch1);
 
         dropdownMenu = view.findViewById(R.id.dropdownMenu);
         tempChartContainer = view.findViewById(R.id.lineChartContainer);
@@ -55,14 +60,13 @@ public class TemperatureFragment extends Fragment implements View.OnClickListene
 
         MainActivity mainActivity = (MainActivity) requireActivity();
         mainActivity.hideToolbar();
-
         setupDropdownMenu();
-
         temperatureSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 // Update temperature unit based on the switch state
                 isCelsius = isChecked;
+                saveTemperatureUnitState(isCelsius);
                 readTemperatureData(); // Update displayed temperature values
 
                 String toastMessage = isChecked ? "Switched to Celsius" : "Switched to Fahrenheit";
@@ -70,6 +74,8 @@ public class TemperatureFragment extends Fragment implements View.OnClickListene
             }
         });
 
+        isCelsius = getTemperatureUnitState();
+        temperatureSwitch.setChecked(isCelsius);
         readTemperatureData();
         handler.postDelayed(updateRunnable, UPDATE_INTERVAL);
         return view;
@@ -94,13 +100,8 @@ public class TemperatureFragment extends Fragment implements View.OnClickListene
 
             private void updateSingleTemperature(double temperatureCelsius, double temperatureValue) {
                 if (binding.singleTemperatureValue != null && binding.singleTemperatureUnit != null) {
-                    if (isCelsius) {
-                        binding.singleTemperatureValue.setText(String.format("%.2f", temperatureCelsius));
-                        binding.singleTemperatureUnit.setText("°C");
-                    } else {
-                        binding.singleTemperatureValue.setText(String.format("%.2f", temperatureValue));
-                        binding.singleTemperatureUnit.setText("°F");
-                    }
+                    binding.singleTemperatureValue.setText(String.format("%.2f", temperatureValue));
+                    binding.singleTemperatureUnit.setText(isCelsius ? "°C" : "°F");
                 }
             }
 
@@ -138,6 +139,17 @@ public class TemperatureFragment extends Fragment implements View.OnClickListene
         if (v.getId() == R.id.backButton) {
             openFragment(new HomeFragment());
         }
+    }
+
+    private void saveTemperatureUnitState(boolean isCelsius) {
+        SharedPreferences.Editor editor = requireActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit();
+        editor.putBoolean(IS_CELSIUS_KEY, isCelsius);
+        editor.apply();
+    }
+
+    private boolean getTemperatureUnitState() {
+        SharedPreferences prefs = requireActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getBoolean(IS_CELSIUS_KEY, false); // Default to false (Fahrenheit)
     }
 
     private void setupDropdownMenu() {
