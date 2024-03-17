@@ -1,56 +1,47 @@
 package com.example.mrhydro;
 
-import android.Manifest;
-import android.app.PendingIntent;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.CompoundButton;
+import android.widget.AdapterView;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.Spinner;
-import android.widget.Switch;
 import android.widget.Toast;
-
+import android.widget.ToggleButton; // Import ToggleButton instead of Switch
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
-
 import com.example.mrhydro.databinding.FragmentHomeBinding;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 public class HomeFragment extends Fragment implements View.OnClickListener {
 
-
     FragmentHomeBinding binding;
-    DatabaseReference reference;
-    Handler handler = new Handler(Looper.getMainLooper());
     Spinner sensorMenu;
-
+    DatabaseReference misterStatusRef; // Reference to the Mister status in the database
+    FirebaseAuth mAuth;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
+
+        // Initialize Firebase Authentication
+        mAuth = FirebaseAuth.getInstance();
+
+        // Initialize database reference
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            String userId = currentUser.getUid();
+            misterStatusRef = FirebaseDatabase.getInstance().getReference().child("users").child(userId).child("Mister Status");
+        }
 
         FrameLayout frameLayout = view.findViewById(R.id.sensorWidgets);
 
@@ -66,13 +57,16 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         CardView mistercard = view.findViewById(R.id.MisterCard);
         sensorMenu = view.findViewById(R.id.sensormenu);
 
+        // Binding MisterToggle
+        ToggleButton misterToggle = binding.MisterSwitch; // Update to ToggleButton
+        misterToggle.setOnClickListener(this); // Register onClickListener to handle toggle
+
         MainActivity mainActivity = (MainActivity) requireActivity();
         mainActivity.showToolbar();
 
         mistercard.setOnClickListener(this);
 
         setupDropdownMenu();
-
 
         return view;
     }
@@ -90,19 +84,25 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.MisterCard) {
-            openFragment(new MisterFragment());
+            handleMisterSwitch(binding.MisterSwitch.isChecked()); // Pass current toggle state
+        } else if (v.getId() == R.id.MisterSwitch) { // Added to handle toggle click
+            handleMisterSwitch(((ToggleButton) v).isChecked()); // Cast to ToggleButton and get state
         }
     }
 
     private void handleMisterSwitch(boolean isChecked) {
+        ToggleButton misterToggle = binding.MisterSwitch;
         if (isChecked) {
             showToast("Mister turned ON");
-            // Perform any other actions you need when the mister is turned ON
+            misterToggle.setBackgroundColor(getResources().getColor(android.R.color.holo_red_light)); // Change background color to red
+            misterStatusRef.setValue(true); // Update database with true
         } else {
             showToast("Mister turned OFF");
-            // Perform any other actions you need when the mister is turned OFF
+            misterToggle.setBackgroundColor(getResources().getColor(android.R.color.darker_gray)); // Set background color to grey
+            misterStatusRef.setValue(false); // Update database with false
         }
     }
+
 
     private void openFragment(Fragment fragment) {
         FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
@@ -128,8 +128,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 String selectedItem = parentView.getItemAtPosition(position).toString();
-
-
+                // Handle item selection here if needed
             }
 
             @Override
@@ -146,5 +145,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        binding = null;
     }
 }

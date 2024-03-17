@@ -102,7 +102,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             // Handle click on the new icon
             Intent intent = new Intent(MainActivity.this, ConfigurationActivity.class);
             startActivity(intent);
-            Toast.makeText(MainActivity.this, "New Icon Clicked", Toast.LENGTH_SHORT).show();
+            return true;
+        }if (itemId == R.id.notification_icon) {
+            // Handle click on the new icon
+            Intent intent = new Intent(MainActivity.this, NotificationsActivity.class);
+            startActivity(intent);
             return true;
         }
         return super.onOptionsItemSelected(item);

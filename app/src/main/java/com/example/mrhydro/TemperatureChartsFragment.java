@@ -1,10 +1,10 @@
 package com.example.mrhydro;
-
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -15,12 +15,16 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+import com.github.mikephil.charting.listener.ChartTouchListener;
+import com.github.mikephil.charting.listener.OnChartGestureListener;
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TemperatureChartsFragment extends Fragment {
+public class TemperatureChartsFragment extends Fragment implements OnChartGestureListener, OnChartValueSelectedListener {
 
     String[] daysOfMonth = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"};
     String[] hoursOfDay = {"00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00"};
@@ -58,6 +62,8 @@ public class TemperatureChartsFragment extends Fragment {
 
     private void customizeLineChart(View view, String selectedOption) {
         temperatureChart = view.findViewById(R.id.temperatureChart);
+        temperatureChart.setOnChartGestureListener(this); // Set gesture listener
+        temperatureChart.setOnChartValueSelectedListener(this); // Set value selected listener
 
         switch (selectedOption) {
             case "Hourly Line Chart":
@@ -78,7 +84,7 @@ public class TemperatureChartsFragment extends Fragment {
                 hourlyDescription.setText("Hourly Temperature Chart");
                 temperatureChart.setDescription(hourlyDescription);
 
-                temperatureChart.setPinchZoom(true);
+                temperatureChart.setPinchZoom(true); // Enable pinch zoom here
 
                 temperatureChart.setData(hourlyData);
                 temperatureChart.invalidate();
@@ -103,10 +109,10 @@ public class TemperatureChartsFragment extends Fragment {
                 dailyDescription.setText("Daily Temperature Chart");
                 temperatureChart.setDescription(dailyDescription);
 
+                temperatureChart.setPinchZoom(true); // Enable pinch zoom here
+
                 temperatureChart.setData(dailyData);
                 temperatureChart.invalidate();
-
-
                 break;
 
             case "Monthly Line Chart":
@@ -127,6 +133,8 @@ public class TemperatureChartsFragment extends Fragment {
                 Description monthlyDescription = new Description();
                 monthlyDescription.setText("Monthly Temperature Chart");
                 temperatureChart.setDescription(monthlyDescription);
+
+                temperatureChart.setPinchZoom(true); // Enable pinch zoom here
 
                 temperatureChart.setData(monthlyData);
                 temperatureChart.invalidate();
@@ -175,5 +183,57 @@ public class TemperatureChartsFragment extends Fragment {
                 break;
         }
         return dataValue;
+    }
+
+    // Implement methods from OnChartGestureListener
+    @Override
+    public void onChartGestureStart(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
+
+    }
+
+    @Override
+    public void onChartGestureEnd(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
+
+    }
+
+    @Override
+    public void onChartLongPressed(MotionEvent me) {
+
+    }
+
+    @Override
+    public void onChartDoubleTapped(MotionEvent me) {
+
+    }
+
+    @Override
+    public void onChartSingleTapped(MotionEvent me) {
+
+    }
+
+    @Override
+    public void onChartFling(MotionEvent me1, MotionEvent me2, float velocityX, float velocityY) {
+
+    }
+
+    @Override
+    public void onChartScale(MotionEvent me, float scaleX, float scaleY) {
+
+    }
+
+    @Override
+    public void onChartTranslate(MotionEvent me, float dX, float dY) {
+
+    }
+
+    // Implement methods from OnChartValueSelectedListener
+    @Override
+    public void onValueSelected(Entry e, Highlight h) {
+
+    }
+
+    @Override
+    public void onNothingSelected() {
+
     }
 }
