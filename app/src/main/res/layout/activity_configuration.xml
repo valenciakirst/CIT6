@@ -15,31 +15,32 @@
 
   <LinearLayout
       android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_marginStart="16dp">
+      android:layout_height="wrap_content">
 
 
     <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:id="@+id/backButton"
+        android:layout_width="63dp"
+        android:layout_height="64dp"
         android:layout_gravity="center"
-        android:layout_marginTop="10dp"
+        android:onClick="onBackButtonClick"
+        android:padding="16dp"
         android:src="@drawable/baseline_arrow_back_ios_new_24"
         android:tint="@color/darknavy"
-        tools:ignore="UseAppTint" />
+
+        tools:ignore="UseAppTint,SpeakableTextPresentCheck" />
 
     <TextView
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
         android:drawableTint="@color/darknavy"
         android:text="Configuration"
         android:textColor="@color/darknavy"
         android:textSize="24sp"
         android:textStyle="bold"
-        android:layout_marginTop="16dp"/>
+        android:layout_gravity="center"/>
   </LinearLayout>
 
   <TextView
@@ -52,6 +53,7 @@
       android:paddingTop="15dp"
       android:paddingEnd="16dp"
       android:paddingBottom="15dp"
+      android:background="@color/gray"
       android:text="Configure Wi-Fi"
       android:textSize="21sp" />
 
@@ -69,6 +71,7 @@
       android:paddingTop="15dp"
       android:paddingBottom="15dp"
       android:paddingStart="16dp"
+      android:background="@color/gray"
       android:drawableEnd="@drawable/baseline_keyboard_arrow_down_24"
       android:paddingEnd="16dp"
       />

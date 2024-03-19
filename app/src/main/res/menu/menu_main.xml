@@ -7,4 +7,11 @@
         android:title="New Icon"
         android:orderInCategory="100"
         app:showAsAction="always" />
+    <item
+        android:id="@+id/notification_icon"
+        android:icon="@drawable/ic_notification_icon"
+        android:title="New Icon"
+        android:orderInCategory="100"
+        app:showAsAction="always"
+        android:iconTint="@color/white" />
 </menu>

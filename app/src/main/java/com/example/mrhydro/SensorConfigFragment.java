@@ -43,7 +43,7 @@ public class SensorConfigFragment extends Fragment {
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
         if (currentUser != null) {
             // Assuming 'users' is your top-level node
-            databaseReference = firebaseDatabase.getReference().child("users").child(currentUser.getUid()).child("configuration");
+            databaseReference = firebaseDatabase.getReference().child("users").child(currentUser.getUid()).child("Sensor Configuration");
         }
 
         addButton.setOnClickListener(new View.OnClickListener() {
