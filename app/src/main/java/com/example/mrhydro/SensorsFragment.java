@@ -35,7 +35,6 @@ public class SensorsFragment extends Fragment implements View.OnClickListener {
     DatabaseReference reference;
     Handler handler = new Handler(Looper.getMainLooper());
     private String humidityValue;
-    private String temperatureValue;
     private boolean isCelsius = true;
     String PREFS_NAME = "MyPrefsFile";
     String IS_CELSIUS_KEY = "isCelsius";
