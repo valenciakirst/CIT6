@@ -15,29 +15,26 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/TempCard"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:layout_row="1"
-            android:layout_rowWeight="1"
-            android:layout_column="0"
+            android:layout_height="160dp"
             android:layout_marginBottom="10dp"
-            android:layout_columnWeight="1"
             android:outlineSpotShadowColor="@color/blue"
             app:cardCornerRadius="15dp"
-            app:cardElevation="12dp">
+            app:cardElevation="15dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/navy"
-                android:foregroundTint="#673AB7"
+                android:background="@color/primary"
                 android:orientation="horizontal"
                 android:padding="20dp">
 
                 <LinearLayout
-                    android:layout_width="173dp"
-                    android:layout_height="match_parent"
+                    android:layout_width="221dp"
+                    android:layout_height="130dp"
+                    android:layout_weight="1"
                     android:orientation="vertical"
-                    android:paddingLeft="0dp"
                     android:paddingRight="10dp">
 
                     <TextView
@@ -46,60 +43,63 @@
                         android:layout_gravity="center_horizontal"
                         android:text="Temperature"
                         android:textColor="@color/white"
-                        android:textSize="21sp" />
+                        android:textSize="19sp" />
 
                     <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:orientation="vertical">
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:orientation="horizontal">
 
-                        <LinearLayout
+                        <TextView
+                            android:id="@+id/singleTemperatureValue"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:paddingLeft="7dp">
-
-                            <TextView
-                                android:id="@+id/singleTemperatureValue"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center_horizontal"
-                                android:text="0.00"
-                                android:textColor="@color/teal"
-                                android:textSize="28sp" />
-
-                            <TextView
-                                android:id="@+id/singleTemperatureUnit"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="°C"
-                                android:textColor="@color/teal"
-                                android:textSize="26sp" />
-
-                        </LinearLayout>
-
-                        <Switch
-                            android:id="@+id/switch2"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Switch Temperature"
+                            android:layout_height="30dp"
+                            android:text="24.00"
                             android:textColor="@color/teal"
-                            android:textSize="12sp"
-                            tools:ignore="TouchTargetSizeCheck" />
+                            android:textSize="20sp"
+                            android:layout_marginLeft="5dp"/>
 
+                        <TextView
+                            android:id="@+id/singleTemperatureUnit"
+                            android:layout_width="wrap_content"
+                            android:layout_height="30dp"
+                            android:layout_marginLeft="2dp"
+                            android:text="°C"
+                            android:textColor="@color/teal"
+                            android:textSize="20sp" />
 
                     </LinearLayout>
+
+                    <Switch
+                        android:id="@+id/switch2"
+                        android:layout_width="180dp"
+                        android:layout_height="5dp"
+                        android:layout_gravity="center_horizontal"
+                        android:text="Switch Temperature"
+                        android:textColor="@color/teal"
+                        android:textSize="12sp"
+                        android:layout_marginLeft="5dp"/>
+
+                    <TextView
+                        android:id="@+id/setTemp"
+                        android:layout_width="180dp"
+                        android:layout_height="18dp"
+                        android:layout_gravity="center_horizontal"
+                        android:text="Set Temperature: 24.00°C"
+                        android:textColor="@color/teal"
+                        android:textSize="14sp"
+                        android:layout_marginLeft="2dp"/>
 
                 </LinearLayout>
 
                 <ImageView
-                    android:layout_width="129dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center_horizontal"
+                    android:layout_width="82dp"
+                    android:layout_height="91dp"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="15dp"
                     android:src="@drawable/baseline_thermostat_24"
                     tools:ignore="ContentDescription" />
-
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -107,74 +107,83 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/HumidityCard"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:layout_row="1"
-            android:layout_rowWeight="1"
-            android:layout_column="1"
-            android:layout_columnWeight="1"
+            android:layout_height="160dp"
             android:layout_marginBottom="10dp"
             android:outlineSpotShadowColor="@color/blue"
             app:cardCornerRadius="15dp"
-            app:cardElevation="15dp">
+            app:cardElevation="15dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/navy"
+                android:background="@color/primary"
                 android:orientation="horizontal"
                 android:padding="20dp">
 
-
                 <LinearLayout
-                    android:layout_width="176dp"
+                    android:layout_width="0dp"
                     android:layout_height="match_parent"
+                    android:layout_weight="1"
                     android:orientation="vertical"
-                    android:paddingLeft="10dp"
                     android:paddingRight="10dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
+                        android:layout_marginBottom="5dp"
                         android:text="Humidity"
                         android:textColor="@color/white"
-                        android:textSize="23sp" />
+                        android:textSize="19sp" />
 
                     <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:paddingLeft="5dp">
+                        android:gravity="center_horizontal">
 
                         <TextView
                             android:id="@+id/humidityValue"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
                             android:text="0.00"
                             android:textColor="@color/teal"
-                            android:textSize="50sp" />
+                            android:textSize="25sp" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="%"
                             android:textColor="@color/teal"
-                            android:textSize="48sp" />
+                            android:textSize="26sp"
+                            android:layout_marginLeft="2dp" />
+
                     </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/setHumidity"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Set Humidity: 68.0%"
+                        android:textColor="@color/teal"
+                        android:textSize="14sp"
+                        android:layout_marginTop="5dp"
+                        android:layout_gravity="center_horizontal" />
 
                 </LinearLayout>
 
                 <ImageView
-                    android:layout_width="125dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center_horizontal"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="20dp"
-                    android:src="@drawable/humidity" />
-
+                    android:layout_width="129dp"
+                    android:layout_height="130dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/humidity"
+                    tools:ignore="ContentDescription" />
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
+
     </LinearLayout>
+
 </FrameLayout>

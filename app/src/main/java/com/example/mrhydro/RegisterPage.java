@@ -52,20 +52,39 @@ public class RegisterPage extends AppCompatActivity {
         inputUsername = findViewById(R.id.Username);
         inputName = findViewById(R.id.Name);
         registerBT = findViewById(R.id.RegisterBtn);
+        TextView toLogin = findViewById(R.id.ToLogin); // Find "login here" TextView
 
         registerBT.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String name = inputName.getText().toString();
-                String username = inputUsername.getText().toString();
-                String email = inputEmail.getText().toString();
-                String password = inputPassword.getText().toString();
+                String name = inputName.getText().toString().trim();
+                String username = inputUsername.getText().toString().trim();
+                String email = inputEmail.getText().toString().trim();
+                String password = inputPassword.getText().toString().trim();
+
+                // Check if any field is empty
+                if (name.isEmpty() || username.isEmpty() || email.isEmpty() || password.isEmpty()) {
+                    Toast.makeText(RegisterPage.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
                 // Call the registerUser method
                 registerUser(name, username, email, password);
             }
         });
+
+
+        // Set onClickListener for the "login here" text
+        toLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(RegisterPage.this, LoginPageFragment.class);
+                startActivity(intent);
+                finish();
+            }
+        });
     }
+
 
     private void registerUser(String name, String username, String email, String password) {
         mAuth.createUserWithEmailAndPassword(email, password)
@@ -90,7 +109,7 @@ public class RegisterPage extends AppCompatActivity {
                                 reference.child(uid).setValue(userData);
 
                                 Toast.makeText(RegisterPage.this, "You have registered successfully!", Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(RegisterPage.this, LoginPage.class);
+                                Intent intent = new Intent(RegisterPage.this, LoginPageFragment.class);
                                 startActivity(intent);
                                 finish();
                             }

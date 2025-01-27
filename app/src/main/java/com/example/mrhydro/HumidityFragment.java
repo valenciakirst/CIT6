@@ -12,17 +12,21 @@ import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.mrhydro.databinding.FragmentHumidityBinding;
-import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.XAxis;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.Calendar;
 
 public class HumidityFragment extends Fragment implements View.OnClickListener {
     private static final int UPDATE_INTERVAL = 2000;
@@ -33,6 +37,7 @@ public class HumidityFragment extends Fragment implements View.OnClickListener {
 
     private Spinner dropdownMenu;
     private FrameLayout lineChartContainer;
+    private String humidityValue; // Declare the humidityValue variable
 
     public HumidityFragment() {
         // Required empty public constructor
@@ -43,7 +48,6 @@ public class HumidityFragment extends Fragment implements View.OnClickListener {
         binding = FragmentHumidityBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
 
-
         ImageView backBT = view.findViewById(R.id.backButton);
         backBT.setOnClickListener(this);
 
@@ -53,7 +57,7 @@ public class HumidityFragment extends Fragment implements View.OnClickListener {
 
         MainActivity mainActivity = (MainActivity) requireActivity();
         mainActivity.hideToolbar();
-        // Setup dropdown menu
+
         setupDropdownMenu();
 
         handler.postDelayed(updateRunnable, UPDATE_INTERVAL);
@@ -79,23 +83,34 @@ public class HumidityFragment extends Fragment implements View.OnClickListener {
         reference = FirebaseDatabase.getInstance().getReference("DHT");
         reference.child("Humidity").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists() && dataSnapshot.getValue() instanceof Double) {
-                    String humidityValue = String.valueOf(dataSnapshot.getValue());
-                    Log.d("HumidityFragment", "Humidity value from Firebase: " + humidityValue);
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    Object value = dataSnapshot.getValue();
+                    if (value != null) {
+                        humidityValue = String.valueOf(value);
+                        Log.d("HumidityFragment", "Humidity value from Firebase: " + humidityValue);
 
-                    if (humidityValue != null && !humidityValue.isEmpty()) {
+                        // Update the UI
                         binding.humidityValue.setText(humidityValue);
+
+                        // Store the humidity value
+                        storeHumidityData(humidityValue);
+                    } else {
+                        Log.e("HumidityFragment", "Humidity value is null");
                     }
+                } else {
+                    Log.e("HumidityFragment", "Humidity value does not exist in Firebase");
                 }
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelled(@NonNull DatabaseError databaseError) {
                 Log.e("HumidityFragment", "Failed to read humidity data", databaseError.toException());
+                Toast.makeText(getContext(), "Failed to read humidity data", Toast.LENGTH_SHORT).show();
             }
         });
     }
+
 
     private Runnable updateRunnable = new Runnable() {
         @Override
@@ -104,30 +119,91 @@ public class HumidityFragment extends Fragment implements View.OnClickListener {
             handler.postDelayed(this, UPDATE_INTERVAL);
         }
     };
+    private void storeHumidityData(String humidity) {
+        // Convert humidity to a float for comparison
+        float currentHumidity = Float.parseFloat(humidity);
+
+        // Reference to the "humidityHistory" node in Firebase
+        DatabaseReference historyRef = FirebaseDatabase.getInstance().getReference("humidityHistory");
+
+        // Access the "hourly" and "daily" nodes
+        DatabaseReference hourlyRef = historyRef.child("hourly");
+        DatabaseReference dailyRef = historyRef.child("daily");
+
+        // Get current time in milliseconds
+        long timestamp = System.currentTimeMillis();  // Current time in milliseconds (Unix timestamp)
+
+        // Check and store the highest humidity for the current hour
+        String currentHour = getCurrentHour(); // Format as "HH:00"
+        hourlyRef.child(currentHour).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                HumidityData existingData = dataSnapshot.getValue(HumidityData.class);
+                float maxHourlyHumidity = existingData != null ? existingData.getHumidity() : 0;
+                if (currentHumidity > maxHourlyHumidity) {
+                    // Store humidity along with the timestamp
+                    hourlyRef.child(currentHour).setValue(new HumidityData(currentHumidity, timestamp))
+                            .addOnSuccessListener(aVoid -> Log.d("HumidityFragment", "Max hourly humidity stored"))
+                            .addOnFailureListener(e -> Log.e("HumidityFragment", "Failed to store max hourly humidity", e));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("HumidityFragment", "Failed to access hourly humidity", databaseError.toException());
+            }
+        });
+
+        // Check and store the highest humidity for the current day
+        String currentDay = getCurrentDay(); // Get the current day (e.g., "6", "7", ...)
+        dailyRef.child(currentDay).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                HumidityData existingData = dataSnapshot.getValue(HumidityData.class);
+                float maxDailyHumidity = existingData != null ? existingData.getHumidity() : 0;
+                if (currentHumidity > maxDailyHumidity) {
+                    // Store humidity along with the timestamp
+                    dailyRef.child(currentDay).setValue(new HumidityData(currentHumidity, timestamp))
+                            .addOnSuccessListener(aVoid -> Log.d("HumidityFragment", "Max daily humidity stored"))
+                            .addOnFailureListener(e -> Log.e("HumidityFragment", "Failed to store max daily humidity", e));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("HumidityFragment", "Failed to access daily humidity", databaseError.toException());
+            }
+        });
+    }
+
+
+    private String getCurrentHour() {
+        Calendar calendar = Calendar.getInstance();
+        int hour = calendar.get(Calendar.HOUR_OF_DAY); // Get the current hour (0-23)
+        return String.format("%02d:00", hour); // Format it as "HH:00" (e.g., "13:00")
+    }
+
+    private String getCurrentDay() {
+        Calendar calendar = Calendar.getInstance();
+        int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH); // Get the current day of the month
+        return String.valueOf(dayOfMonth); // Return as string (e.g., "6", "7", ...)
+    }
 
     private void setupDropdownMenu() {
-        // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
                 requireContext(),
-                R.array.line_chart_options,  // Add a string array resource for options
+                R.array.line_chart_options,
                 android.R.layout.simple_spinner_item
         );
 
-        // Specify the layout to use when the list of choices appears
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        // Apply the adapter to the spinner
         dropdownMenu.setAdapter(adapter);
 
-        // Set a listener to handle item selection
         dropdownMenu.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                // Handle the selected item
                 String selectedItem = parentView.getItemAtPosition(position).toString();
-                // You can perform actions based on the selected item
-
-                // For example, show a fragment based on the selected item
                 showLineChartFragment(selectedItem);
             }
 
@@ -138,21 +214,15 @@ public class HumidityFragment extends Fragment implements View.OnClickListener {
         });
     }
 
-
     private void showLineChartFragment(String selectedOption) {
-        // Create an instance of the LineChartFragment
         HumidityHoursFragment lineChartFragment = new HumidityHoursFragment();
 
-        // Pass the selected option to the LineChartFragment
         Bundle bundle = new Bundle();
         bundle.putString("selectedOption", selectedOption);
         lineChartFragment.setArguments(bundle);
 
-        // Replace the existing fragment with the LineChartFragment
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
         transaction.replace(R.id.lineChartContainer, lineChartFragment);
         transaction.commit();
     }
-
-
 }

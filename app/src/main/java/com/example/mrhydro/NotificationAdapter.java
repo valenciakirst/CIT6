@@ -64,7 +64,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     }
 
     public void readNotificationsFromFirebase() {
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("notifications");
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("notificationHistory");
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {

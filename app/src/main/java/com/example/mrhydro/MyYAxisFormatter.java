@@ -6,7 +6,8 @@ import com.github.mikephil.charting.formatter.ValueFormatter;
 
 public class MyYAxisFormatter extends ValueFormatter {
     @Override
-    public String getAxisLabel(float value, AxisBase axis) {
-        return String.valueOf(value);
+    public String getFormattedValue(float value) {
+        return String.format("%.1f°C", value);
     }
-}
+
+    }

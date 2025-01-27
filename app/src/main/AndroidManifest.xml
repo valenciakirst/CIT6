@@ -17,6 +17,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MrHydro"
         tools:targetApi="31" >
+        <service
+            android:name=".TemperatureMonitorService"
+            android:exported="false"
+            android:foregroundServiceType="location" />
         <activity
             android:name=".ConfigurationActivity"
             android:exported="false" />
@@ -26,9 +30,6 @@
             android:screenOrientation="sensor" />
         <activity
             android:name=".RegisterPage"
-            android:exported="false" />
-        <activity
-            android:name=".LoginPage"
             android:exported="false" />
         <activity
             android:name=".NotificationsActivity"

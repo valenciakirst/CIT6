@@ -1,12 +1,13 @@
 package com.example.mrhydro;
+
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
+import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Description;
@@ -15,21 +16,26 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.highlight.Highlight;
-import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
-import com.github.mikephil.charting.listener.ChartTouchListener;
-import com.github.mikephil.charting.listener.OnChartGestureListener;
-import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+import com.github.mikephil.charting.formatter.ValueFormatter;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TemperatureChartsFragment extends Fragment implements OnChartGestureListener, OnChartValueSelectedListener {
+public class TemperatureChartsFragment extends Fragment {
 
-    String[] daysOfMonth = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"};
-    String[] hoursOfDay = {"00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00"};
-    String[] monthsOfYear = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
-    LineChart temperatureChart;
+    private static final String TAG = "TemperatureChartsFragment";
+    private String[] hoursOfDay = {"00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00"};
+    private String[] daysOfMonth = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"};
+    private LineChart temperatureChart;
+    private DatabaseReference databaseReference;
+    private String selectedOption;
+    private FirebaseAuth auth = FirebaseAuth.getInstance();
 
     public TemperatureChartsFragment() {
         // Required empty public constructor
@@ -37,203 +43,163 @@ public class TemperatureChartsFragment extends Fragment implements OnChartGestur
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment using the generated binding class
         View view = inflater.inflate(R.layout.fragment_temperature_charts, container, false);
+        temperatureChart = view.findViewById(R.id.temperatureChart);
 
-        // Get the selected option from arguments
-        Bundle args = getArguments();
-        if (args != null) {
-            String selectedOption = args.getString("selectedOption");
-            // Now, based on the selectedOption, customize your line chart view
-            customizeLineChart(view, selectedOption);
+        if (auth.getCurrentUser() != null) {
+            Log.d(TAG, "User is authenticated");
+            Bundle args = getArguments();
+            if (args != null) {
+                selectedOption = args.getString("selectedOption");
+                Log.d(TAG, "Received option: " + selectedOption);
+                customizeLineChart(view, selectedOption);
+            } else {
+                Log.e(TAG, "No arguments provided!");
+            }
+        } else {
+            Log.e(TAG, "User is not authenticated!");
         }
-
         return view;
     }
 
-    // Add this method to update the chart when the selected option changes
-    public void updateChart(String selectedOption) {
-        View view = getView();
-        if (view != null) {
-            customizeLineChart(view, selectedOption);
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if (auth.getCurrentUser() != null) {
+            databaseReference = FirebaseDatabase.getInstance().getReference("temperatureHistory");
+        } else {
+            Log.e(TAG, "User is not authenticated!");
         }
     }
 
+    private void fetchTemperatureData() {
+        if (auth.getCurrentUser() == null) {
+            Log.e(TAG, "User is not authenticated!");
+            return;
+        }
+
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                List<Entry> dataValues = new ArrayList<>();
+
+                if ("Hourly Line Chart".equals(selectedOption)) {
+                    // Process hourly data
+                    DataSnapshot hourlySnapshot = snapshot.child("hourly");
+                    for (DataSnapshot hourSnapshot : hourlySnapshot.getChildren()) {
+                        String hourKey = hourSnapshot.getKey();
+                        if (hourSnapshot.hasChild("temperature")) {
+                            Float temperatureValue = hourSnapshot.child("temperature").getValue(Float.class);
+
+                            if (temperatureValue != null) {
+                                try {
+                                    int hourIndex = Integer.parseInt(hourKey.split(":")[0]); // Parse hour (e.g., "12:00")
+                                    dataValues.add(new Entry(hourIndex, temperatureValue));
+                                } catch (NumberFormatException e) {
+                                    Log.e(TAG, "Invalid hour format: " + hourKey);
+                                }
+                            }
+                        }
+                    }
+                } else if ("Daily Line Chart".equals(selectedOption)) {
+                    // Process daily data
+                    DataSnapshot dailySnapshot = snapshot.child("daily");
+                    for (DataSnapshot daySnapshot : dailySnapshot.getChildren()) {
+                        String dayKey = daySnapshot.getKey();
+                        if (daySnapshot.hasChild("temperature")) {
+                            Float temperatureValue = daySnapshot.child("temperature").getValue(Float.class);
+
+                            if (temperatureValue != null) {
+                                try {
+                                    int dayIndex = Integer.parseInt(dayKey); // Parse day index
+                                    dataValues.add(new Entry(dayIndex, temperatureValue));
+                                } catch (NumberFormatException e) {
+                                    Log.e(TAG, "Invalid day format: " + dayKey);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                updateChartData(dataValues);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e(TAG, "Failed to fetch temperature data: " + error.getMessage());
+            }
+        });
+    }
+
+
+    private void updateChartData(List<Entry> dataValues) {
+        if (dataValues == null || dataValues.isEmpty()) {
+            Log.w(TAG, "No data available to update the chart.");
+            return;
+        }
+
+        LineDataSet dataSet = new LineDataSet(dataValues, "Temperature Data");
+        setupDataSetAppearance(dataSet);
+
+        temperatureChart.setData(new LineData(dataSet));
+        temperatureChart.invalidate(); // Redraw the chart
+    }
+
+    private void setupDataSetAppearance(LineDataSet dataSet) {
+        dataSet.setColor(getResources().getColor(R.color.teal));
+        dataSet.setCircleColor(getResources().getColor(R.color.teal));
+        dataSet.setLineWidth(2f);
+        dataSet.setCircleRadius(4f);
+        dataSet.setValueTextSize(10f);
+    }
 
     private void customizeLineChart(View view, String selectedOption) {
-        temperatureChart = view.findViewById(R.id.temperatureChart);
-        temperatureChart.setOnChartGestureListener(this); // Set gesture listener
-        temperatureChart.setOnChartValueSelectedListener(this); // Set value selected listener
+        // Configure chart appearance
+        temperatureChart.setPinchZoom(true);
+        temperatureChart.getAxisRight().setEnabled(false);
 
-        switch (selectedOption) {
-            case "Hourly Line Chart":
-                MyXAxisFormatter hourlyXAxisFormatter = new MyXAxisFormatter(hoursOfDay);
-                XAxis hourlyXAxis = temperatureChart.getXAxis();
-                hourlyXAxis.setValueFormatter(hourlyXAxisFormatter);
+        XAxis xAxis = temperatureChart.getXAxis();
+        xAxis.setGranularity(1f);
 
-                MyYAxisFormatter hourlyYAxisFormatter = new MyYAxisFormatter();
-                YAxis hourlyLeftYAxis = temperatureChart.getAxisLeft();
-                hourlyLeftYAxis.setValueFormatter(hourlyYAxisFormatter);
+        if ("Hourly Line Chart".equals(selectedOption)) {
+            xAxis.setValueFormatter(new MyXAxisFormatter(hoursOfDay));
+        } else if ("Daily Line Chart".equals(selectedOption)) {
+            xAxis.setValueFormatter(new MyXAxisFormatter(daysOfMonth));
+        }
 
-                LineDataSet hourlyTemperatureDataSet = new LineDataSet(dataValues(selectedOption), "Temperature Data");
-                ArrayList<ILineDataSet> hourlyDataSets = new ArrayList<>();
-                hourlyDataSets.add(hourlyTemperatureDataSet);
-                LineData hourlyData = new LineData(hourlyDataSets);
+        YAxis yAxis = temperatureChart.getAxisLeft();
+        yAxis.setValueFormatter(new MyYAxisFormatter());
 
-                Description hourlyDescription = new Description();
-                hourlyDescription.setText("Hourly Temperature Chart");
-                temperatureChart.setDescription(hourlyDescription);
+        Description description = new Description();
+        description.setText(selectedOption);
+        temperatureChart.setDescription(description);
 
-                temperatureChart.setPinchZoom(true); // Enable pinch zoom here
+        fetchTemperatureData();
+    }
 
-                temperatureChart.setData(hourlyData);
-                temperatureChart.invalidate();
-                break;
+    private static class MyXAxisFormatter extends ValueFormatter {
+        private final String[] labels;
 
-            case "Daily Line Chart":
-                // Customize for daily chart
-                MyXAxisFormatter dailyXAxisFormatter = new MyXAxisFormatter(daysOfMonth);
-                XAxis dailyXAxis = temperatureChart.getXAxis();
-                dailyXAxis.setValueFormatter(dailyXAxisFormatter);
+        public MyXAxisFormatter(String[] labels) {
+            this.labels = labels;
+        }
 
-                MyYAxisFormatter dailyYAxisFormatter = new MyYAxisFormatter();
-                YAxis dailyLeftYAxis = temperatureChart.getAxisLeft();
-                dailyLeftYAxis.setValueFormatter(dailyYAxisFormatter);
-
-                LineDataSet dailyTemperatureDataSet = new LineDataSet(dataValues(selectedOption), "Temperature Data");
-                ArrayList<ILineDataSet> dailyDataSets = new ArrayList<>();
-                dailyDataSets.add(dailyTemperatureDataSet);
-                LineData dailyData = new LineData(dailyDataSets);
-
-                Description dailyDescription = new Description();
-                dailyDescription.setText("Daily Temperature Chart");
-                temperatureChart.setDescription(dailyDescription);
-
-                temperatureChart.setPinchZoom(true); // Enable pinch zoom here
-
-                temperatureChart.setData(dailyData);
-                temperatureChart.invalidate();
-                break;
-
-            case "Monthly Line Chart":
-                // Customize for monthly chart
-                MyXAxisFormatter monthlyXAxisFormatter = new MyXAxisFormatter(monthsOfYear);
-                XAxis monthlyXAxis = temperatureChart.getXAxis();
-                monthlyXAxis.setValueFormatter(monthlyXAxisFormatter);
-
-                MyYAxisFormatter monthlyYAxisFormatter = new MyYAxisFormatter();
-                YAxis monthlyLeftYAxis = temperatureChart.getAxisLeft();
-                monthlyLeftYAxis.setValueFormatter(monthlyYAxisFormatter);
-
-                LineDataSet monthlyTemperatureDataSet = new LineDataSet(dataValues(selectedOption), "Temperature Data");
-                ArrayList<ILineDataSet> monthlyDataSets = new ArrayList<>();
-                monthlyDataSets.add(monthlyTemperatureDataSet);
-                LineData monthlyData = new LineData(monthlyDataSets);
-
-                Description monthlyDescription = new Description();
-                monthlyDescription.setText("Monthly Temperature Chart");
-                temperatureChart.setDescription(monthlyDescription);
-
-                temperatureChart.setPinchZoom(true); // Enable pinch zoom here
-
-                temperatureChart.setData(monthlyData);
-                temperatureChart.invalidate();
-                break;
-
-            default:
-                // Handle unknown option
-                break;
+        @Override
+        public String getFormattedValue(float value) {
+            int index = (int) value;
+            if (index >= 0 && index < labels.length) {
+                return labels[index];
+            }
+            return "";
         }
     }
 
-
-    private List<Entry> dataValues(String selectedOption) {
-        ArrayList<Entry> dataValue = new ArrayList<>();
-
-        switch (selectedOption) {
-            case "Hourly Line Chart":
-                // Example data for daily chart
-                for (int i = 0; i < 24; i++) {
-                    // Replace these values with actual hourly temperature data
-                    float temperatureValue = (float) (Math.random() * 10 + 20);
-                    dataValue.add(new Entry(i, temperatureValue));
-                }
-                break;
-
-            case "Daily Line Chart":
-                // Example data for monthly chart
-                for (int i = 0; i < daysOfMonth.length; i++) {
-                    // Replace these values with actual daily temperature data
-                    float temperatureValue = (float) (Math.random() * 10 + 20);
-                    dataValue.add(new Entry(i + 1, temperatureValue));
-                }
-                break;
-
-            case "Monthly Line Chart":
-                // Example data for yearly chart
-                for (int i = 0; i < monthsOfYear.length; i++) {
-                    // Replace these values with actual monthly temperature data
-                    float temperatureValue = (float) (Math.random() * 10 + 20);
-                    dataValue.add(new Entry(i + 1, temperatureValue));
-                }
-                break;
-
-            default:
-                // Handle unknown option
-                break;
+    private static class MyYAxisFormatter extends ValueFormatter {
+        @Override
+        public String getFormattedValue(float value) {
+            return String.format("%.1f°C", value);
         }
-        return dataValue;
     }
 
-    // Implement methods from OnChartGestureListener
-    @Override
-    public void onChartGestureStart(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
-
-    }
-
-    @Override
-    public void onChartGestureEnd(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
-
-    }
-
-    @Override
-    public void onChartLongPressed(MotionEvent me) {
-
-    }
-
-    @Override
-    public void onChartDoubleTapped(MotionEvent me) {
-
-    }
-
-    @Override
-    public void onChartSingleTapped(MotionEvent me) {
-
-    }
-
-    @Override
-    public void onChartFling(MotionEvent me1, MotionEvent me2, float velocityX, float velocityY) {
-
-    }
-
-    @Override
-    public void onChartScale(MotionEvent me, float scaleX, float scaleY) {
-
-    }
-
-    @Override
-    public void onChartTranslate(MotionEvent me, float dX, float dY) {
-
-    }
-
-    // Implement methods from OnChartValueSelectedListener
-    @Override
-    public void onValueSelected(Entry e, Highlight h) {
-
-    }
-
-    @Override
-    public void onNothingSelected() {
-
-    }
 }

@@ -1,18 +1,16 @@
-
 plugins {
-    id("com.android.application")
-    id ("com.google.gms.google-services")
+    id("com.android.application") version "8.1.3"
+    id("com.google.gms.google-services")
 }
+
 
 android {
     namespace = "com.example.mrhydro"
     compileSdk = 34
 
-
     defaultConfig {
         applicationId = "com.example.mrhydro"
         minSdk = 24
-        //noinspection OldTargetApi
         targetSdk = 33
         versionCode = 1
         versionName = "1.0"
@@ -20,8 +18,13 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    buildFeatures{
+    buildFeatures {
         viewBinding = true
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
 
     buildTypes {
@@ -32,39 +35,34 @@ android {
                 "proguard-rules.pro"
             )
         }
-
-
-        compileOptions {
-            sourceCompatibility = JavaVersion.VERSION_1_8
-            targetCompatibility = JavaVersion.VERSION_1_8
-        }
-    }
-
-    dependencies {
-
-        implementation("androidx.appcompat:appcompat:1.6.1")
-        implementation("com.google.android.material:material:1.11.0")
-        implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-        testImplementation("junit:junit:4.13.2")
-        implementation ("androidx.preference:preference:1.1.1")
-        implementation ("androidx.fragment:fragment:1.3.6")
-
-        androidTestImplementation("androidx.test.ext:junit:1.1.5")
-        androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-        implementation(platform("com.google.firebase:firebase-bom:32.6.0"))
-        implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
-        implementation("com.google.firebase:firebase-auth")
-        implementation("com.google.android.gms:play-services-auth:20.7.0")
-        implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
     }
 }
-    dependencies {
-        implementation("com.google.firebase:firebase-database:20.3.0")
-        implementation("com.google.firebase:firebase-auth:22.3.1")
-        implementation("androidx.appcompat:appcompat:1.6.1")
-        implementation("com.google.android.material:material:1.11.0")
-        implementation("androidx.constraintlayout:constraintlayout:2.1.4")
 
-    }
+dependencies {
+    // Firebase BoM
+    implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
+    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-database")
+    implementation("com.google.firebase:firebase-analytics")
+
+    // AndroidX and Material Components
+    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("com.google.android.material:material:1.11.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation("androidx.preference:preference:1.1.1")
+    implementation("androidx.fragment:fragment:1.3.6")
+
+    // Other Dependencies
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+    implementation("androidx.work:work-runtime:2.8.1")
+    implementation("com.google.android.gms:play-services-auth:21.3.0")
+    implementation("com.google.android.gms:play-services-safetynet:18.0.1")
+    implementation("com.google.android.gms:play-services-recaptcha:17.1.0")
 
 
+
+    // Testing
+    testImplementation("junit:junit:4.13.2")
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+}

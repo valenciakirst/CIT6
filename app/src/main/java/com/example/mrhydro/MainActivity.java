@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             NotificationChannel channel = new NotificationChannel("CHANNEL_ID", name, importance);
             channel.setDescription(description);
 
-            // Register the channel with the system; you can't change the importance or other notification behaviors after this
+            // Register the channel with the system
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }
@@ -69,24 +69,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         // Check if the user is null or not logged in
         if (user == null) {
-            Intent intent = new Intent(getApplicationContext(), LoginPage.class);
-            startActivity(intent);
-            finish();
+            // If the user is not logged in, show the LoginPageFragment
+            if (savedInstanceState == null) {
+                FragmentTransaction transaction = fragmentManager.beginTransaction();
+                transaction.replace(R.id.fragment_container, new LoginPageFragment());
+                transaction.commit();
+            }
+        } else {
+            // If the user is logged in, show the home fragment
+            if (savedInstanceState == null) {
+                fragmentManager.beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
+                navigationView.setCheckedItem(R.id.nav_home);
+            }
         }
+
 
         toggle = new ActionBarDrawerToggle(
                 this, drawerLayout, toolbar, R.string.open_nav, R.string.close_nav
         );
-
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
         fragmentManager = getSupportFragmentManager(); // Initialize fragmentManager
-
-        if (savedInstanceState == null) {
-            fragmentManager.beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
-            navigationView.setCheckedItem(R.id.nav_home);
-        }
     }
 
     @Override
@@ -99,12 +103,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int itemId = item.getItemId();
         if (itemId == R.id.action_new_icon) {
-            // Handle click on the new icon
             Intent intent = new Intent(MainActivity.this, ConfigurationActivity.class);
             startActivity(intent);
             return true;
-        }if (itemId == R.id.notification_icon) {
-            // Handle click on the new icon
+        }
+        if (itemId == R.id.notification_icon) {
             Intent intent = new Intent(MainActivity.this, NotificationsActivity.class);
             startActivity(intent);
             return true;
@@ -124,7 +127,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else if (itemID == R.id.nav_logout) {
             Toast.makeText(this, "Logout", Toast.LENGTH_SHORT).show();
             FirebaseAuth.getInstance().signOut();
-            Intent intent = new Intent(getApplicationContext(), LoginPage.class);
+            // Log out the user and go back to login page
+            Intent intent = new Intent(getApplicationContext(), LoginPageFragment.class);
             startActivity(intent);
             finish();
         }

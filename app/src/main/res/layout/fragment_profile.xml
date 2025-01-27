@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".ProfileFragment">
 
+
     <View
         android:id="@+id/view2"
         android:layout_width="409dp"
@@ -22,7 +23,7 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_marginTop="50dp"
-        android:background="@color/blue"
+        android:background="@color/secondary"
         android:src="@android:drawable/gallery_thumb"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
         app:layout_constraintEnd_toEndOf="parent"

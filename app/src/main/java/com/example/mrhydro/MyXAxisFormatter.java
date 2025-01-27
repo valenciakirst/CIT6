@@ -1,18 +1,22 @@
 package com.example.mrhydro;
 
+import android.util.Log;
+
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 
 public class MyXAxisFormatter extends ValueFormatter {
-    private final String[] daysOfMonth;
+    private String[] values;
 
-    public MyXAxisFormatter(String[] daysOfMonth) {
-        this.daysOfMonth = daysOfMonth;
+    public MyXAxisFormatter(String[] values) {
+        this.values = values;
     }
 
     @Override
-    public String getAxisLabel(float value, AxisBase axis) {
-        int index = (int) value;
-        return index >= 0 && index < daysOfMonth.length ? daysOfMonth[index] : String.valueOf(value);
+    public String getFormattedValue(float value) {
+        if (value >= 0 && value < values.length) {
+            return values[(int) value];
+        }
+        return "";
     }
 }

@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="white">#E9EFEC</color>
     <color name="darknavy">#04364A</color>
     <color name="navy">#053B50</color>
     <color name="blue">#176B87</color>
     <color name="teal">#64CCC5</color>
     <color name="gray">#EEEEEE</color>
+    <color name="primary">#16423C</color>
+    <color name="secondary">#6A9C89</color>
+    <color name="tertiary">#C4DAD2</color>
+    <color name="danger">#C7253E</color>
+
 </resources>
